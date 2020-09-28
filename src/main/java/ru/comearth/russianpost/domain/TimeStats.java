@@ -15,30 +15,46 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 public class TimeStats {
+
+    public TimeStats(String name, Double ACW, Double ATT, Double ASA, Double AHT, Double hold, Double totalCalls, Double transferedCalls, Double occupancy, Double utilization, Operator operator) {
+        this.name = name;
+        this.ACW = ACW;
+        this.ATT = ATT;
+        this.ASA = ASA;
+        this.AHT = AHT;
+        this.hold=hold;
+        this.totalCalls = totalCalls;
+        this.transferedCalls = transferedCalls;
+        this.occupancy = occupancy;
+        this.utilization = utilization;
+        this.operator = operator;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
     private LocalDate date;
 
     private  String name;
 
-    private Long ACW;
+    private Double ACW;
 
-    private Long ATT;
+    private Double ATT;
 
-    private Long ASA;
+    private Double ASA;
 
-    private Long AHT;
+    private Double AHT;
 
-    private Long totalCalls;
+    private Double hold;
 
-    private Long transferedCalls;
+    private Double totalCalls;
 
-    private Long occupancy;
+    private Double transferedCalls;
 
-    private Long utilization;
+    private Double occupancy;
+
+    private Double utilization;
 
 
     @ManyToOne

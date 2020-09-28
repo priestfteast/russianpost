@@ -17,6 +17,16 @@ import java.util.Objects;
 @NoArgsConstructor
 public class CSAT {
 
+    public CSAT(String name, Double overallScore, Double interestScore, Double profScore, Double goodWillScore, Double averageScore, Operator operator) {
+        this.name = name;
+        this.overallScore = overallScore;
+        this.interestScore = interestScore;
+        this.profScore = profScore;
+        this.goodWillScore = goodWillScore;
+        this.averageScore = averageScore;
+        this.operator = operator;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,21 +35,21 @@ public class CSAT {
 
     private  String name;
 
-    private Long overallScore;
+    private Double overallScore;
 
-    private Long interestScore;
+    private Double interestScore;
 
-    private Long profScore;
+    private Double profScore;
 
-    private Long goodWillScore;
+    private Double goodWillScore;
 
-    private Long averageScore;
+    private Double averageScore;
 
-    private String phoneNumber;
+    private Double phoneNumber;
 
-    private String questionType;
+    private Double questionType;
 
-    private String recordName;
+    private Double recordName;
 
     @ManyToOne
     private Operator operator;
