@@ -3,7 +3,6 @@ package ru.comearth.russianpost.services;
 import org.springframework.stereotype.Service;
 import ru.comearth.russianpost.domain.CSAT;
 import ru.comearth.russianpost.domain.Operator;
-import ru.comearth.russianpost.domain.TimeStats;
 import ru.comearth.russianpost.repositories.CSATRepository;
 
 import java.time.LocalDate;

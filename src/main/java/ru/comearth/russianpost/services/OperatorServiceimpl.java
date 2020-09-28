@@ -1,6 +1,7 @@
 package ru.comearth.russianpost.services;
 
 
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.comearth.russianpost.commands.OperatorCommand;
 import ru.comearth.russianpost.converters.OperatorCommandToOperator;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class OperatorServiceimpl implements OperatorService {
 
     private final OperatorToOperatorCommand operatorToOperatorCommand;
