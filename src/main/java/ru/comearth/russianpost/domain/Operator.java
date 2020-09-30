@@ -3,6 +3,8 @@ package ru.comearth.russianpost.domain;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +20,7 @@ public class Operator {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String fullName;
 
     private LocalDate employementDate;
 
@@ -28,6 +30,9 @@ public class Operator {
 
     @Enumerated(value = EnumType.STRING)
     private Shift shift;
+
+    @Enumerated(value = EnumType.STRING)
+    private FireCause fireCause;
 
     @OneToMany
     private List<TimeStats> dailyStats = new ArrayList<>();
@@ -39,7 +44,7 @@ public class Operator {
     @Override
     public String toString() {
         return "Operator: " +
-                 name;
+                fullName;
     }
 
     @Override
@@ -48,13 +53,13 @@ public class Operator {
         if (o == null || getClass() != o.getClass()) return false;
         Operator operator = (Operator) o;
         return Objects.equals(id, operator.id) &&
-                Objects.equals(name, operator.name) &&
+                Objects.equals(fullName, operator.fullName) &&
                 Objects.equals(employementDate, operator.employementDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, employementDate);
+        return Objects.hash(id, fullName, employementDate);
     }
 
 }

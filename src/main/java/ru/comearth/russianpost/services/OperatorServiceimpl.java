@@ -11,8 +11,10 @@ import ru.comearth.russianpost.exceptions.NotFoundException;
 import ru.comearth.russianpost.repositories.OperatorRepository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OperatorServiceimpl implements OperatorService {
@@ -30,8 +32,14 @@ public class OperatorServiceimpl implements OperatorService {
     }
 
     @Override
-    public List<Operator> getAllOperators() {
-        return operatorRepository.findAll();
+    public List<Operator> getAllOperators(String request) {
+
+        switch (request){
+            case "[all]": return operatorRepository.findAll();
+            case "[actual]": return operatorRepository.findAll().stream().filter(operator -> !operator.isFired()).collect(Collectors.toList());
+            case "[fired]" : return operatorRepository.findAll().stream().filter(operator -> operator.isFired()).collect(Collectors.toList());
+            default: return operatorRepository.findAll();
+        }
     }
 
 
@@ -61,12 +69,5 @@ public class OperatorServiceimpl implements OperatorService {
         operatorRepository.deleteById(idToDelete);
     }
 
-    @Transactional
-    @Override
-    public void fireById(Long id) {
-        Operator op = findById(id);
-        op.setFired(true);
-        op.setRetirementDate(LocalDate.now());
-        operatorRepository.save(op);
-    }
+
 }

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Operator form</title>
+    <title>Fire operator</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -15,9 +15,8 @@
     <div class="container col-md-4 offset-4">
         <div class="card-body">
             <h5 class="card-title" style="color: #0275d8">Operator form</h5>
-                <p4 style="color: red" th:if="${operator.isFired()}">This operator is fired!</p4>
             <br>
-            <form th:object="${operator}" th:action="@{'/operators/save'}" method="post"
+            <form th:object="${operator}" th:action="@{'/operators/fire'}" method="post"
                   class="form-horizontal">
                 <input type="hidden" th:field="*{id}">
                 <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
@@ -31,7 +30,10 @@
                         <div class="col-md-8">
                             <input type="text" class="form-control" id="name" placeholder="Full name"
                                    th:field="*{fullName}"
-                                   th:errorclass="has-error">
+                                   th:errorclass="has-error"
+                                   th:value="${operator.fullName}"
+                                   th:readonly="readonly"
+                            >
                             <span class="help-block" th:if="${#fields.hasErrors('fullName')}">
                                         <ul>
                                             <li th:each="err : ${#fields.errors('fullName')}"
@@ -46,8 +48,8 @@
                         <div class="col-md-3">
                             <p>Shift:</p>
                         </div>
-                        <div class="col-md-4">
-                            <select class="form-control" th:field="*{shift}">
+                        <div class="col-md-6">
+                            <select class="form-control" th:field="*{shift}"  th:disabled="disabled">
                                 <option th:each="type : ${T(ru.comearth.russianpost.domain.Shift).values()}"
                                         th:value="${type.name()}"
                                         th:text="${type.name()}"
@@ -65,7 +67,6 @@
                     <br>
 
                     <div class="row">
-
                         <div class="col-md-3">
                             <p>Employed:</p>
                         </div>
@@ -73,7 +74,9 @@
                             <input type="text" class="form-control" id="doe" placeholder="Date of employement"
                                    th:field="*{employementDate}"
                                    th:errorclass="has-error"
-                            >
+                                   th:value="${operator.employementDate}"
+                                   th:readonly="readonly"
+                                   >
                             <span class="help-block" th:if="${#fields.hasErrors('employementDate')}">
                                         <ul>
                                             <li th:each="err : ${#fields.errors('employementDate')}"
@@ -82,10 +85,21 @@
                                     </span>
                         </div>
                     </div>
+
+
                     <br>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Fired</label> <br>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="checkbox" th:name="fired" th:value="true" th:checked="${operator.isFired()}" th:disabled="disabled">
+                        </div>
+                    </div>
+                </div>
+                <br>
 
-
-                <div class="row" th:if="${operator.isFired()}">
+                <div class="row">
                     <div class="col-md-3">
                         <p>Fire Cause:</p>
                     </div>
@@ -102,7 +116,7 @@
                 </div>
                 <br>
 
-                <div class="row" th:if="${operator.isFired()}">
+                <div class="row">
                     <div class="col-md-3">
                         <p>Retirement Date:</p>
                     </div>
@@ -118,16 +132,12 @@
                                     </span>
                     </div>
                 </div>
-                </div>
                 <br>
 
-                <button type="submit" class="btn btn-primary">Submit</button>
-                <a  th:if="${not operator.isFired()}" class="btn btn-primary" href="#" th:href="@{'/operators/' + ${operator.id} + '/fireform'}"
-                   role="button">Fire</a>
+                <button type="submit" class="btn btn-primary">Fire</button>
             </form>
         </div>
     </div>
-
 </div>
 </body>
 </html>

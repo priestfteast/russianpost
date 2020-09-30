@@ -21,9 +21,15 @@ public class OperatorToOperatorCommand implements Converter<Operator, OperatorCo
 
         OperatorCommand operatorCommand = new OperatorCommand();
         operatorCommand.setId(operator.getId());
-        operatorCommand.setName(operator.getName());
+        operatorCommand.setFullName(operator.getFullName());
         operatorCommand.setEmployementDate(operator.getEmployementDate());
         operatorCommand.setShift(operator.getShift());
+        operatorCommand.setFired(operator.isFired());
+
+        if(operator.isFired()) {
+            operatorCommand.setFireCause(operator.getFireCause());
+            operatorCommand.setRetirementDate(operator.getRetirementDate());
+        }
 
         return operatorCommand;
     }

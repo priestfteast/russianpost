@@ -5,6 +5,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import ru.comearth.russianpost.domain.FireCause;
 import ru.comearth.russianpost.domain.Operator;
 import ru.comearth.russianpost.domain.Shift;
 import ru.comearth.russianpost.repositories.OperatorRepository;
@@ -36,23 +37,34 @@ public class OperatorBootStrap implements ApplicationListener<ContextRefreshedEv
 
 //        Ivanov Ivan
         Operator ivanov = new Operator();
-        ivanov.setName("Иванов Иван Иванович");
+        ivanov.setFullName("Иванов Иван Иванович");
         ivanov.setEmployementDate(LocalDate.of(2020, Month.SEPTEMBER,14));
         ivanov.setShift(Shift.NINE_AM);
 
 
         //        Pereyaslova Maria
         Operator maria = new Operator();
-        maria.setName("Переяслова Мария Игоревна");
+        maria.setFullName("Переяслова Мария Игоревна");
 
         maria.setEmployementDate(LocalDate.of(2020, Month.SEPTEMBER,21));
         maria.setShift(Shift.ELEVEN_AM);
+
+        //        Pereyaslova Maria
+        Operator Imambek = new Operator();
+        Imambek.setFullName("Нуршугалиев имамбек Алиевич");
+
+        Imambek.setEmployementDate(LocalDate.of(2020, Month.SEPTEMBER,14));
+        Imambek.setShift(Shift.TWELVE_AM);
+        Imambek.setFireCause(FireCause.LOW_SALARY);
+        Imambek.setFired(true);
+        Imambek.setRetirementDate(LocalDate.of(2020, Month.SEPTEMBER,29));
 
 
 
         //add to return list
         operators.add(ivanov);
         operators.add(maria);
+        operators.add(Imambek);
 
         return operators;
     }

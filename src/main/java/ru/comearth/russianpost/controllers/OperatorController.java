@@ -2,6 +2,7 @@ package ru.comearth.russianpost.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,21 +23,23 @@ public class OperatorController {
         this.operatorService = operatorService;
     }
 
-
+    private String request ="[actual]";
 
     @RequestMapping({"/operators/showall","/operators/showall.html"})
     public String showoperators(Model model){
-        model.addAttribute("operators",operatorService.getAllOperators());
+        model.addAttribute("operators",operatorService.getAllOperators(request));
+        model.addAttribute("request",request);
         return OPERATORS_ALL;
     }
 
+    @PostMapping("/filter")
+    public String filter (@RequestBody MultiValueMap<String, String> formData){
+        request =formData.values().toArray()[0].toString();
+        System.out.println(formData.values().toArray()[0]);
 
-    @GetMapping({"/operators/{id}/show"})
-    public String showById(@PathVariable String id, Model model){
-
-        model.addAttribute("operator", operatorService.findById(Long.valueOf(id)));
-        return "operators/show";
+        return "redirect:/"+OPERATORS_ALL;
     }
+
 
     @GetMapping({"/operators/new"})
     public String newOperator(Model model){
@@ -57,24 +60,39 @@ public class OperatorController {
         return "redirect:/operators";
     }
 
-    @GetMapping("operators/{id}/fire")
-    public String fireById(@PathVariable String id){
-        operatorService.fireById(Long.valueOf(id));
-        return "redirect:/"+OPERATORS_ALL;
+    @GetMapping("/operators/{id}/fireform")
+    public String fireForm(@PathVariable String id, Model model){
+        model.addAttribute("operator",operatorService.findCommandById(Long.valueOf(id)));
+        return "operators/fireform";
+    }
+
+    @PostMapping("operators/fire")
+    public String fireById(@Valid @ModelAttribute("operator") OperatorCommand operatorCommand, BindingResult bindingResult, Model model){
+        if(bindingResult.hasErrors()){
+            bindingResult.getAllErrors().forEach(objectError -> {
+                System.out.println(objectError.toString());
+            });
+            model.addAttribute("operator",operatorCommand);
+            return "/operators/fireform";
+        }
+
+        operatorCommand.setFired(true);
+        operatorService.saveOperatorCommand(operatorCommand);
+        return "redirect:/operators/showall";
     }
 
     @PostMapping("operators/save")
-    public String saveOrUpdate (@Valid @ModelAttribute("operator") OperatorCommand operatorCommand, BindingResult bindingResult, Model model){
+    public String saveOrUpdate (@Valid @ModelAttribute("operator") OperatorCommand operatorCommand, BindingResult bindingResult){
 
         if(bindingResult.hasErrors()){
             bindingResult.getAllErrors().forEach(objectError -> {
                 System.out.println(objectError.toString());
             });
-            return OPERATOR_FORM_URL;
+             return OPERATOR_FORM_URL;
         }
 
-        OperatorCommand savedOperatorCommand = operatorService.saveOperatorCommand(operatorCommand);
-        return "redirect:/operators/"+savedOperatorCommand.getId()+"/show";
+        operatorService.saveOperatorCommand(operatorCommand);
+        return "redirect:/operators/showall";
     }
 
     @ExceptionHandler(NotFoundException.class)
