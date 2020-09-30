@@ -10,6 +10,7 @@ import ru.comearth.russianpost.domain.Shift;
 
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -32,7 +33,7 @@ public class OperatorCommand {
 
         private boolean fired;
 
-        @javax.validation.constraints.NotNull
+        @Nullable
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
         @PastOrPresent
         private LocalDate retirementDate;
