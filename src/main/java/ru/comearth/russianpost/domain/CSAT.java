@@ -39,13 +39,15 @@ public class CSAT {
 
     private Double goodWillScore;
 
+    private Double usefullInfo;
+
     private Double averageScore;
 
-    private Double phoneNumber;
+    private String phoneNumber;
 
-    private Double questionType;
+    private String questionType;
 
-    private Double recordName;
+    private String recordName;
 
     @ManyToOne
     private Operator operator;
@@ -70,7 +72,8 @@ public class CSAT {
     @Override
     public String toString() {
         return " Звонок принят: "+ date +
+                ", c номера: " + phoneNumber +
                 ", Оператором: " + name +
-                ", CSAT = " + averageScore;
+                ", CSAT = " + overallScore;
     }
 }

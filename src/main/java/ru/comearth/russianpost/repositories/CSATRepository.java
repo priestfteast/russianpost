@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface CSATRepository extends JpaRepository<CSAT,Long> {
 
+    boolean existsByDate(LocalDate date);
+
     List<CSAT> findAllByDateBetween(LocalDate start, LocalDate end);
 
     List<CSAT> findAllByOperatorAndDateBetween(Operator operator, LocalDate start, LocalDate end);

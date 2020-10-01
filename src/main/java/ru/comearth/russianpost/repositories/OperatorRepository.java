@@ -4,4 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ru.comearth.russianpost.domain.Operator;
 
 public interface OperatorRepository extends JpaRepository<Operator,Long> {
+    Operator findByFullName(String fullName);
 }
