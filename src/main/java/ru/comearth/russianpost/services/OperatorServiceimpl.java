@@ -58,8 +58,10 @@ public class OperatorServiceimpl implements OperatorService {
     }
 
     @Override
-    public OperatorCommand saveOperatorCommand(OperatorCommand operatorCommand) {
+    public OperatorCommand saveOperatorCommand(OperatorCommand operatorCommand) throws Exception {
         Operator detachedOperator = operatorCommandToOperator.convert(operatorCommand);
+        if(operatorRepository.findByFullName(detachedOperator.getFullName())!=null)
+            throw new Exception("Оператор, " +operatorCommand.getFullName()+" уже сохранен в базе!!!");
         Operator savedOperator = operatorRepository.save(detachedOperator);
         return operatorToOperatorCommand.convert(savedOperator);
     }

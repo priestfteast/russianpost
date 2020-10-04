@@ -23,4 +23,8 @@ public interface CSATService {
 
     String getAverageDCSAT(LocalDate start, LocalDate end);
 
+    void removeAllByDate(LocalDate date) throws Exception;
+
+    void saveAll(List<CSAT> stats);
+
 }

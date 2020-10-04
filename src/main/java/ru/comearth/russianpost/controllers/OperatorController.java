@@ -24,6 +24,7 @@ public class OperatorController {
     }
 
     private String request ="[actual]";
+    private String error=null;
 
     @RequestMapping({"/operators/showall","/operators/showall.html"})
     public String showoperators(Model model){
@@ -44,6 +45,8 @@ public class OperatorController {
     @GetMapping({"/operators/new"})
     public String newOperator(Model model){
         model.addAttribute("operator", new OperatorCommand());
+        model.addAttribute("error", error);
+        error=null;
         return "operators/operatorform";
     }
 
@@ -51,6 +54,8 @@ public class OperatorController {
     public String updateOperator(@PathVariable String id, Model model){
 
         model.addAttribute("operator", operatorService.findCommandById(Long.valueOf(id)));
+        model.addAttribute("error", error);
+        error=null;
         return "operators/operatorform";
     }
 
@@ -77,7 +82,11 @@ public class OperatorController {
         }
 
         operatorCommand.setFired(true);
-        operatorService.saveOperatorCommand(operatorCommand);
+        try {
+            operatorService.saveOperatorCommand(operatorCommand);
+        } catch (Exception e) {
+            error=e.getMessage();
+        }
         return "redirect:/operators/showall";
     }
 
@@ -91,7 +100,13 @@ public class OperatorController {
              return OPERATOR_FORM_URL;
         }
 
-        operatorService.saveOperatorCommand(operatorCommand);
+        try {
+            operatorService.saveOperatorCommand(operatorCommand);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            error=e.getMessage();
+            return "redirect:/operators/new";
+        }
         return "redirect:/operators/showall";
     }
 

@@ -6,6 +6,7 @@ import ru.comearth.russianpost.domain.Operator;
 import ru.comearth.russianpost.repositories.CSATRepository;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -83,4 +84,22 @@ public class CSATServiceImpl implements CSATService {
 
         return dcsat+"%";
     }
+
+    @Override
+    public void saveAll(List<CSAT> stats) {
+        csatRepository.saveAll(stats);
+        System.out.println("Saved "+stats.size()+" CSAT records");
+    }
+
+    @Override
+    public void removeAllByDate(LocalDate date) throws Exception {
+        if(csatRepository.getFirstByDate(date)==null) {
+            throw new Exception("В базе нет данных " +
+                    "по статистике за " + date +".\n"+
+                    " Выберите другую дату" +".\n");
+        }
+       csatRepository.deleteAllByDate(date);
+        System.out.println("Deleted statistics for "+date);
+    }
+
 }

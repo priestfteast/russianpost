@@ -14,4 +14,8 @@ public interface TimeStatsService {
 
     TimeStats countAverageStats(List<TimeStats> stats);
 
+    void saveAll(List<TimeStats> stats);
+
+    void removeAllByDate(LocalDate date) throws Exception;
+
 }

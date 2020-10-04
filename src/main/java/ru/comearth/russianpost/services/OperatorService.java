@@ -9,6 +9,6 @@ public interface OperatorService {
     List<Operator> getAllOperators(String request);
     Operator findById(Long l);
     OperatorCommand findCommandById(Long l);
-    OperatorCommand saveOperatorCommand(OperatorCommand operatorCommand);
+    OperatorCommand saveOperatorCommand(OperatorCommand operatorCommand) throws Exception;
     void deleteById(Long idToDelete);
 }

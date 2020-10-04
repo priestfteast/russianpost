@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+<br>
+<br>
+<div class="container-fluid">
+    <div class="container col-md-8 offset-2">
+<div class="row">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <form  action="http:\\localhost" method="post" enctype="multipart/form-data"
+                       th:action="@{'/uploadCsat'}">
+                    <label class="control-label">Select File with CSAT</label>
+                    <input id="csatfile" name="xlsCSAT" type="file" class="file"  accept=".xlsx">
+                    <br>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <form  action="http:\\localhost" method="post" enctype="multipart/form-data"
+                       th:action="@{'/uploadAht'}">
+                    <label class="control-label">Select File with AHT</label>
+                    <input id="ahtfile" name="xlsAHT" type="file" class="file"  accept=".xlsx">
+                    <br>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <form  action="http:\\localhost" method="post" class="form-horizontal" th:action="@{'/deletecsats'}">
+                    <div class="form-group">
+                        <label>Remove CSAT by date</label>
+                        <input name="date" type="date" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Remove</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <form  action="http:\\localhost" method="post" class="form-horizontal" th:action="@{'/deletetimestats'}">
+                    <div class="form-group">
+                        <label>Remove AHT by date</label>
+                        <input name="date" type="date" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Remove</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<div class="row" th:if="${error ne null}">
+    <div class="table-responsive">
+        <p th:text="${error}" style="color: red"></p>
+    </div>
+</div>
+
+
+<div class="row" th:if="${csats.size()>0 or timestats.size()>0}">
+    <div class="col-md-12">
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-md-3">
+                <p th:if="${csats.size()>0}" th:text="${'Uploaded '+csats.size()+' CSAT records'}"></p>
+                <p th:if="${timestats.size()>0}" th:text="${'Uploaded '+timestats.size()+' AHT records'}"></p>
+            </div>
+            <p>
+                <button class="btn btn-primary"  type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    Save data
+                </button>
+            </p>
+            <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                    Are you sure you want to save data? Press "Yes" to assent.
+                    <form action="http:\\localhost" method="GET" th:action="@{'/savestats'}">
+                        <input id="save" type="submit" name="action" value="Yes" class="btn btn-primary" />
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+    </div>
+
+        <div class="table-responsive" th:if="${csats.size()>0}">
+            <table class="table table-hover">
+                <thead class="thead-inverse">
+                <tr>
+                    <th>№</th>
+                    <!--                                <th>ID</th>-->
+                    <th>Дата</th>
+                    <th>Оператор</th>
+                    <th>Телефон</th>
+                    <th>Общая оценка</th>
+                    <th>Заинтересованность</th>
+                    <th>Профессионализм</th>
+                    <th>Доброжелательность</th>
+                    <th>Помогло ли</th>
+                    <th>Средняя оценка</th>
+                    <th>Запись</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="dailyStats : ${csats}" >
+                    <td>123</td>
+                    <!--                                <td th:text="${operator.id}">idd</td>-->
+                    <td th:text="${dailyStats.date}">Tasty Goodnees 3</td>
+                    <td th:text="${dailyStats.name}">Tasty Goodnees 3</td>
+                    <td th:text="${dailyStats.phoneNumber}">Tasty Goodnees 3</td>
+                    <td th:text="${dailyStats.overallScore}">Tasty Goodnees 3</td>
+                    <td th:text="${dailyStats.interestScore}">Tasty Goodnees 3</td>
+                    <td th:text="${dailyStats.profScore}">Tasty Goodnees 3</td>
+                    <td th:text="${dailyStats.goodWillScore}">Tasty Goodnees 3</td>
+                    <td th:text="${dailyStats.usefullInfo}">Tasty Goodnees 3</td>
+                    <td th:text="${dailyStats.averageScore}">Tasty Goodnees 3</td>
+                    <td th:text="${dailyStats.recordName}">Tasty Goodnees 3</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    <div class="table-responsive" th:if="${timestats.size()>0}">
+        <table class="table table-hover">
+            <thead class="thead-inverse">
+            <tr>
+                <th>№</th>
+                <!--                                <th>ID</th>-->
+                <th>Дата</th>
+                <th>Оператор</th>
+                <th>Answered calls</th>
+                <th>ATT</th>
+                <th>ACW</th>
+                <th>AHT</th>
+                <th>ASA</th>
+                <th>Hold</th>
+                <th>Occupancy</th>
+                <th>Utilization</th>
+                <th>Transfered calls</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="dailyStats : ${timestats}">
+                <td>123</td>
+                <!--                                <td th:text="${operator.id}">idd</td>-->
+                <td th:text="${dailyStats.date}">Tasty Goodnees 3</td>
+                <td th:text="${dailyStats.name}">Tasty Goodnees 3</td>
+                <td th:text="${dailyStats.getTotalCalls()}">Tasty Goodnees 3</td>
+                <td th:text="${dailyStats.getATT()}">Tasty Goodnees 3</td>
+                <td th:text="${dailyStats.getACW()}">Tasty Goodnees 3</td>
+                <td th:text="${dailyStats.getAHT()}">Tasty Goodnees 3</td>
+                <td th:text="${dailyStats.getASA()}">Tasty Goodnees 3</td>
+                <td th:text="${dailyStats.getHold()}">Tasty Goodnees 3</td>
+                <td th:text="${dailyStats.getOccupancy()}">Tasty Goodnees 3</td>
+                <td th:text="${dailyStats.getUtilization()}">Tasty Goodnees 3</td>
+                <td th:text="${dailyStats.getTransferedCalls()}">Tasty Goodnees 3</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    </div>
+
+<script>
+    $('.table tbody tr').each(function (i) {
+        var number = i + 1;
+        $(this).find('td:first').text(number + ".");
+    });
+</script>
+<script>
+    save.onclick = function() {
+        alert('Данные сохранены!');
+    };
+</script>
+</body>
+</html>

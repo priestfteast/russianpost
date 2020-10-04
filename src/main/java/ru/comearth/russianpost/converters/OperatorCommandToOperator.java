@@ -20,7 +20,7 @@ public class OperatorCommandToOperator implements Converter<OperatorCommand, Ope
 
         Operator operator = new Operator();
         operator.setId(operatorCommand.getId());
-        operator.setFullName(operatorCommand.getFullName());
+        operator.setFullName(operatorCommand.getFullName().trim());
         operator.setEmployementDate(operatorCommand.getEmployementDate());
         operator.setShift(operatorCommand.getShift());
         operator.setFired(operatorCommand.isFired());

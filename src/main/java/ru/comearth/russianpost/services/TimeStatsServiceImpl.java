@@ -18,6 +18,23 @@ public class TimeStatsServiceImpl implements TimeStatsService {
     }
 
     @Override
+    public void saveAll(List<TimeStats> stats) {
+        timeStatsRepository.saveAll(stats);
+        System.out.println("Saved "+stats.size()+" TimeStats records");
+    }
+
+    @Override
+    public void removeAllByDate(LocalDate date) throws Exception {
+        if(timeStatsRepository.getFirstByDate(date)==null) {
+            throw new Exception("В базе нет данных " +
+                    "по статистике за " + date +".\n"+
+                    " Выберите другую дату" +".\n");
+        }
+        timeStatsRepository.deleteAllByDate(date);
+        System.out.println("Deleted statistics for "+date);
+    }
+
+    @Override
     public TimeStats getOverallStats(LocalDate start, LocalDate end)  {
 
         List<TimeStats> stats = timeStatsRepository.findAllByDateBetween(start,end);

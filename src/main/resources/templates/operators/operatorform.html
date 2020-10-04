@@ -16,6 +16,11 @@
         <div class="card-body">
             <h5 class="card-title" style="color: #0275d8">Operator form</h5>
                 <p4 style="color: red" th:if="${operator.isFired()}">This operator is fired!</p4>
+            <div class="row" th:if="${error ne null}">
+                <div class="table-responsive">
+                    <p th:text="${error}" style="color: red"></p>
+                </div>
+            </div>
             <br>
             <form th:object="${operator}" th:action="@{'/operators/save'}" method="post"
                   class="form-horizontal">
