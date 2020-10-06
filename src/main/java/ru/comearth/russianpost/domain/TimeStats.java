@@ -12,7 +12,7 @@ import java.util.Objects;
 @NoArgsConstructor
 public class TimeStats {
 
-    public TimeStats(String name, Double ACW, Double ATT, Double ASA, Double AHT, Double hold, Double totalCalls, Double transferedCalls, Double occupancy, Double utilization, Operator operator) {
+    public TimeStats(String name, Double ACW, Double ATT, Double ASA, Double AHT, Double hold, Double totalCalls, Double transferedCalls, Double occupancy, Double utilization) {
         this.name = name;
         this.ACW = ACW;
         this.ATT = ATT;
@@ -23,7 +23,6 @@ public class TimeStats {
         this.transferedCalls = transferedCalls;
         this.occupancy = occupancy;
         this.utilization = utilization;
-        this.operator = operator;
     }
 
     @Id

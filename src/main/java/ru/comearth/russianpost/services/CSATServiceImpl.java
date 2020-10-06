@@ -19,13 +19,13 @@ public class CSATServiceImpl implements CSATService {
     }
 
     @Override
-    public CSAT getOverallCSAT(LocalDate start, LocalDate end) {
+    public CSAT getAverageCSAT(LocalDate start, LocalDate end) {
         List<CSAT> stats = csatRepository.findAllByDateBetween(start, end);
         return countAverageCSAT(stats);
     }
 
     @Override
-    public CSAT getOverallOperatorCSAT(Operator operator, LocalDate start, LocalDate end) {
+    public CSAT getAverageOperatorCSAT(Operator operator, LocalDate start, LocalDate end) {
         List<CSAT> stats = csatRepository.findAllByOperatorAndDateBetween(operator,start, end);
         return countAverageCSAT(stats);
     }
@@ -52,37 +52,41 @@ public class CSATServiceImpl implements CSATService {
     public String getOperatorCSAT(Operator operator, LocalDate start, LocalDate end) {
         List<CSAT> stats = csatRepository.findAllByOperatorAndDateBetween(operator,start, end);
 
-        double fourAndFive = stats.stream().filter(csat1 -> csat1.getAverageScore()>=4.0).count();
-        double csat = fourAndFive*100/stats.size();
+        double fourAndFive = stats.stream().filter(csat1 -> csat1.getOverallScore()>=4.0).count();
+        double totalCalls = stats.stream().filter(csat1 -> csat1.getOverallScore()>0.0).count();
+        double csat = fourAndFive*100/totalCalls;
 
-        return csat+"%";
+        return cutDouble(csat)+"%("+fourAndFive+" из "+totalCalls+")";
     }
 
     @Override
-    public String getAverageCSAT(LocalDate start, LocalDate end) {
+    public String getOverallCSAT(LocalDate start, LocalDate end) {
         List<CSAT> stats = csatRepository.findAllByDateBetween(start, end);
-        double fourAndFive = stats.stream().filter(csat1 -> csat1.getAverageScore()>=4.0).count();
-        double csat = fourAndFive*100/stats.size();
+        double fourAndFive = stats.stream().filter(csat1 -> csat1.getOverallScore()>=4.0).count();
+        double totalCalls = stats.stream().filter(csat1 -> csat1.getOverallScore()>0.0).count();
+        double csat = fourAndFive*100/totalCalls;
 
-        return csat+"%";
+        return cutDouble(csat)+"%("+fourAndFive+" из "+totalCalls+")";
     }
 
     @Override
     public String getOperatorDCSAT(Operator operator, LocalDate start, LocalDate end) {
         List<CSAT> stats = csatRepository.findAllByOperatorAndDateBetween(operator,start, end);
-        double ones = stats.stream().filter(csat1 -> csat1.getAverageScore()<2.0).count();
-        double dcsat = ones*100/stats.size();
+        double ones = stats.stream().filter(csat1 -> csat1.getOverallScore()==1.0).count();
+        double totalCalls = stats.stream().filter(csat1 -> csat1.getOverallScore()>0.0).count();
+        double dcsat = ones*100/totalCalls;
 
-        return dcsat+"%";
+        return cutDouble(dcsat)+"%("+ones+" из "+totalCalls+")";
     }
 
     @Override
-    public String getAverageDCSAT(LocalDate start, LocalDate end) {
+    public String getOverallDCSAT(LocalDate start, LocalDate end) {
         List<CSAT> stats = csatRepository.findAllByDateBetween(start, end);
-        double ones = stats.stream().filter(csat1 -> csat1.getAverageScore()<2.0).count();
-        double dcsat = ones*100/stats.size();
+        double ones = stats.stream().filter(csat1 -> csat1.getOverallScore()==1.0).count();
+        double totalCalls = stats.stream().filter(csat1 -> csat1.getOverallScore()>0.0).count();
+        double dcsat = ones*100/totalCalls;
 
-        return dcsat+"%";
+        return cutDouble(dcsat)+"%("+ones+" из "+totalCalls+")";
     }
 
     @Override
@@ -100,6 +104,10 @@ public class CSATServiceImpl implements CSATService {
         }
        csatRepository.deleteAllByDate(date);
         System.out.println("Deleted statistics for "+date);
+    }
+
+    public String cutDouble (Double number){
+        return String.format("%.3f",number).replaceFirst(",",".");
     }
 
 }

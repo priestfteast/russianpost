@@ -16,6 +16,8 @@ public interface TimeStatsRepository extends JpaRepository<TimeStats,Long> {
 
     TimeStats getFirstByDate(LocalDate date);
 
+    TimeStats getFirstByDateAndName(LocalDate date,String name);
+
     void deleteAllByDate(LocalDate date);
 
     @Query("SELECT DISTINCT date FROM TimeStats")

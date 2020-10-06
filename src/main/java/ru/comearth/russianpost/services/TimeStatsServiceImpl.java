@@ -52,8 +52,9 @@ public class TimeStatsServiceImpl implements TimeStatsService {
 
     @Override
     public TimeStats countAverageStats(List<TimeStats> stats) {
-        TimeStats result = new TimeStats(stats.get(0).getDate() + " по " + stats.get(stats.size() - 1).getDate(),
-                0.0, 0.0, 0.0, 0.0,0.0, 0.0, 0.0, 0.0, 0.0, stats.get(0).getOperator());
+        TimeStats result = new TimeStats("average",0.0, 0.0, 0.0, 0.0,0.0, 0.0,
+                0.0, 0.0, 0.0);
+        if(stats.size()==0) return result;
         double size = (double) stats.size();
         stats.forEach(timeStats -> {
             result.setACW(result.getACW() + timeStats.getACW());
@@ -68,6 +69,6 @@ public class TimeStatsServiceImpl implements TimeStatsService {
         });
         return new TimeStats(result.getName(),result.getACW()/size,result.getATT()/size,result.getASA()/size,
                 result.getAHT()/size,result.getHold()/size,result.getTotalCalls(),result.getTransferedCalls(),
-                result.getOccupancy()/size,result.getUtilization()/size,result.getOperator());
+                result.getOccupancy()/size,result.getUtilization()/size);
     }
 }

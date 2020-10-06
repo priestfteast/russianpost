@@ -58,6 +58,11 @@ public class OperatorServiceimpl implements OperatorService {
     }
 
     @Override
+    public Operator findByName(String name) {
+        return operatorRepository.findByFullName(name);
+    }
+
+    @Override
     public OperatorCommand saveOperatorCommand(OperatorCommand operatorCommand) throws Exception {
         Operator detachedOperator = operatorCommandToOperator.convert(operatorCommand);
         if(operatorRepository.findByFullName(detachedOperator.getFullName())!=null)

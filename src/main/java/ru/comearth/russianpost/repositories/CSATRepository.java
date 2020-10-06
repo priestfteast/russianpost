@@ -6,7 +6,6 @@ import ru.comearth.russianpost.domain.CSAT;
 import ru.comearth.russianpost.domain.Operator;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
 
 
@@ -21,8 +20,11 @@ public interface CSATRepository extends JpaRepository<CSAT,Long> {
 
     CSAT getFirstByDate(LocalDate date);
 
+    CSAT getFirstByDateAndName(LocalDate date,String name);
+
     void deleteAllByDate(LocalDate date);
 
     @Query("SELECT DISTINCT date FROM CSAT")
     List<LocalDate> findDistinctDates();
+
 }
