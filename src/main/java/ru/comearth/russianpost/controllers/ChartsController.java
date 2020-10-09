@@ -91,12 +91,15 @@ public class ChartsController {
                         LocalDate.parse(request.get(1)), request.get(2), days) : new ArrayList<>();
                 Double averageAht = chartService.countAverageTimeStats(LocalDate.parse(request.get(0)),LocalDate.parse(request.get(1))).getAHT();
                 Double averageHold = chartService.countAverageTimeStats(LocalDate.parse(request.get(0)),LocalDate.parse(request.get(1))).getHold();
+                List<Double> ahtByExperience = chartService.getAhtByExperience(request.get(2),
+                        LocalDate.parse(request.get(0)), LocalDate.parse(request.get(1)));
 
                 model.addAttribute("averageaht",averageAht.intValue()+" сек.");
                 model.addAttribute("averagehold",averageHold.intValue()+" сек.");
                 model.addAttribute("timestats",timeStats);
                 model.addAttribute("hold",hold);
                 model.addAttribute("target",target);
+                model.addAttribute("ahtbyexperience",ahtByExperience);
 
             }
 
@@ -115,6 +118,7 @@ public class ChartsController {
         catch (Exception e){
             error=e.getMessage()+"\n";
             model.addAttribute("error",error);
+            e.printStackTrace();
             error=null;
             return "charts/charts";
         }

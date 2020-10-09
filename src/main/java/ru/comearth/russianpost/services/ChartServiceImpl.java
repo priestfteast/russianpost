@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+
 @Service
 public class ChartServiceImpl implements ChartService {
 
@@ -68,11 +70,11 @@ public class ChartServiceImpl implements ChartService {
                 sb.append(csatService.getOperatorCSAT(operator, startDate, endDate));
                 sb.append(" DCSAT = "+ csatService.getOperatorDCSAT(operator, startDate, endDate));
                 if(!sb.toString().contains("NaN%"))
-                result.add(sb.toString());
+                result.add(sb.toString().replaceAll("\\.",","));
             });
             String overAllStats = " За период с "+startDate+ " по "+endDate+" общий CSAT  = "+ csatService.getOverallCSAT( startDate, endDate)+
                     " общий DCSAT  = "+csatService.getOverallDCSAT(startDate,endDate);
-            result.add(0,overAllStats);
+            result.add(0,overAllStats.replaceAll("\\.",","));
         }
         else {
             Operator operator = operatorService.findByName(name);
@@ -83,11 +85,11 @@ public class ChartServiceImpl implements ChartService {
                 sb.append(csatService.getOperatorCSAT(operator, date, date));
                 sb.append(" DCSAT = "+ csatService.getOperatorDCSAT(operator, date, date));
                 if(!sb.toString().contains("NaN%"))
-                    result.add(sb.toString());
+                    result.add(sb.toString().replaceAll("\\.",","));
             });
             String overAllStats = " За период с "+startDate+ " по "+endDate+" общий CSAT  = "+ csatService.getOperatorCSAT(operator, startDate, endDate)+
                     " общий DCSAT  = "+csatService.getOperatorDCSAT(operator, startDate,endDate);
-            result.add(0,overAllStats);
+            result.add(0,overAllStats.replaceAll("\\.",","));
         }
             return result;
 
@@ -175,6 +177,29 @@ public class ChartServiceImpl implements ChartService {
             timeStats.forEach(timeStats1 -> names.add(timeStats1.getName()));
         }
         return names.size();
+    }
+
+    @Override
+    public List<Double> getAhtByExperience(String name, LocalDate start, LocalDate end){
+        List<Double> result = new ArrayList<>();
+                List<TimeStats> stats = (name.equals("[all]")) ? timeStatsRepository.findAllByDateBetween(start, end) :
+                timeStatsRepository.findAllByOperatorAndDateBetween(operatorService.findByName(name),start,end);
+        result.add(timeStatsService.countAverageStats(stats.stream().filter(stats1->stats1.getOperator().getEmployementDate().
+                until(stats1.getDate()).getDays()<=7).collect(Collectors.toList())).getAHT());
+        result.add(timeStatsService.countAverageStats(stats.stream().filter(stats1->stats1.getOperator().getEmployementDate().
+                until(stats1.getDate()).getDays()>7 && stats1.getOperator().getEmployementDate().
+                until(stats1.getDate()).getDays()<=14).collect(Collectors.toList())).getAHT());
+        result.add(timeStatsService.countAverageStats(stats.stream().filter(stats1->stats1.getOperator().getEmployementDate().
+                until(stats1.getDate()).getDays()>=14 && stats1.getOperator().getEmployementDate().
+                until(stats1.getDate()).getDays()<=21).collect(Collectors.toList())).getAHT());
+        result.add(timeStatsService.countAverageStats(stats.stream().filter(stats1->stats1.getOperator().getEmployementDate().
+                until(stats1.getDate()).getDays()>21 && stats1.getOperator().getEmployementDate().
+                until(stats1.getDate()).getDays()<=30).collect(Collectors.toList())).getAHT());
+        result.add(timeStatsService.countAverageStats(stats.stream().filter(stats1->stats1.getOperator().getEmployementDate().
+                until(stats1.getDate()).getDays()>=30).collect(Collectors.toList())).getAHT());
+
+        return result;
+
     }
 
     @Override

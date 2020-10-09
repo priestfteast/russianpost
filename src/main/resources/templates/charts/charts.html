@@ -163,8 +163,22 @@
     </div>
     </div>
 
-<div class="row " th:if="${request.get(3).equals('AHT')and not #lists.isEmpty(days) and  error == null}">
+    <div class="row " th:if="${request.get(3).equals('AHT')and not #lists.isEmpty(days) and  error == null}">
+        <div class="col-md-8">
+    <h6 class="card-title" th:text="${'С '+request.get(0) +'  по  '+request.get(1)}"></h6>
+    <p class="card-text" th:if="${request.get(2).equals('[all]')}"
+       th:text="${'Работало операторов : '+opers}">Somefjmfhjjhjft.</p>
+    <p class="card-text" th:if="${request.get(2).equals('[all]')}"
+       th:text="${'AHT = '+averageaht+'Hold = '+averagehold}">Somefjmfhjjhjft.</p>
+    <p class="card-text" th:if="${not request.get(2).equals('[all]')}"
+       th:text="${request.get(2)+ ' : '}">Somefjmfhjjhjft.</p>
+    <p class="card-text" th:if="${not request.get(2).equals('[all]')}"
+       th:text="${'AHT = '+averageaht+'Hold = '+averagehold}">Somefjmfhjjhjft.</p>
+        </div>
 
+    </div>
+
+    <div class="row " th:if="${request.get(3).equals('AHT')and not #lists.isEmpty(days) and  error == null}">
     <div class="col-md-8">
         <canvas id="aht_chart">
         </canvas>
@@ -221,29 +235,36 @@
                 });
         </script>
     </div>
-    <div class="col-md-4">
-        <br>
-        <div class="card" style="width: 18rem;">
-            <br>
-            <img src="../static/images/garniturablue.jpg" th:src="@{/images/garniturablue.jpg}" class="card-img-top"
-                 alt="...">
-            <div class="card-body">
-                <h6 class="card-title" th:text="${'С '+request.get(0) +'  по  '+request.get(1)}"></h6>
-                <p class="card-text" th:if="${request.get(2).equals('[all]')}"
-                   th:text="${'Работало операторов : '+opers}">Somefjmfhjjhjft.</p>
-                <p class="card-text" th:if="${request.get(2).equals('[all]')}"
-                   th:text="${'AHT = '+averageaht}">Somefjmfhjjhjft.</p>
-                <p class="card-text" th:if="${request.get(2).equals('[all]')}"
-                   th:text="${'Hold = '+averagehold}">Somefjmfhjjhjft.</p>
-                <p class="card-text" th:if="${not request.get(2).equals('[all]')}"
-                   th:text="${request.get(2)+ ' : '}">Somefjmfhjjhjft.</p>
-                <p class="card-text" th:if="${not request.get(2).equals('[all]')}"
-                   th:text="${'AHT = '+averageaht}">Somefjmfhjjhjft.</p>
-                <p class="card-text" th:if="${not request.get(2).equals('[all]')}"
-                   th:text="${'Hold = '+averagehold}">Somefjmfhjjhjft.</p>
-            </div>
+
+        <div class="col-md-4">
+            <canvas id="aht_bar_chart">
+            </canvas>
+            <script type="text/javascript" th:inline="javascript">
+                new Chart(document.getElementById("aht_bar_chart"), {
+                    type: 'bar',
+                    data: {
+                        labels: ["1st Week", "2nd Week", "3d Week", "4th Week", "Month"],
+                        datasets: [
+                            {
+                                label: "AHT (seconds)",
+                                backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", 'forestgreen'],
+                                data: /*[[ ${ahtbyexperience} ]]*/,
+                            }
+                        ]
+                    },
+                    options: {
+                        legend: { display: false},
+                        title: {
+                            display: true,
+                            text: 'Average AHT due to experience'
+                        }
+                    }
+                });
+            </script>
         </div>
-    </div>
+
+
+
 </div>
 </div>
     <ul th:each="csat : ${csatstrings}">

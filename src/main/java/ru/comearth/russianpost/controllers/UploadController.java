@@ -62,6 +62,7 @@ public class UploadController {
         }
         catch (Exception e){
             error=e.getMessage()+"\n";
+            e.printStackTrace();
             return "redirect:/upload";
         }
     }
@@ -78,6 +79,7 @@ public class UploadController {
         }
         catch (Exception e){
             error=e.getMessage()+"\n";
+            e.printStackTrace();
             return "redirect:/upload";
         }
     }
@@ -100,6 +102,7 @@ public class UploadController {
             return "redirect:/upload";
         } catch (Exception e) {
             error = e.getMessage() + "\n";
+            e.printStackTrace();
             return "redirect:/upload";
         }
     }
@@ -112,6 +115,7 @@ public class UploadController {
             return "redirect:/upload";
         } catch (Exception e) {
             error=e.getMessage()+"\n";
+            e.printStackTrace();
             return "redirect:/upload";
         }
     }
@@ -124,6 +128,7 @@ public class UploadController {
             return "redirect:/upload";
         } catch (Exception e) {
             error=e.getMessage()+"\n";
+            e.printStackTrace();
             return "redirect:/upload";
         }
     }

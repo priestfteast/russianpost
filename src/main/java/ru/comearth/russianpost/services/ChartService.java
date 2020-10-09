@@ -20,5 +20,7 @@ public interface ChartService {
 
     int countDistinctByNameAndDateBetween(String name, LocalDate start, LocalDate end, String type);
 
+    List<Double> getAhtByExperience(String name, LocalDate start, LocalDate end);
+
     TimeStats countAverageTimeStats(LocalDate start, LocalDate end);
 }

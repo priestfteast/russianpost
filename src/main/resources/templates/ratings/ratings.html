@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ratings</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+</head>
+
+<body>
+<br>
+<div class="container-fluid">
+    <div class="container col-md-8 offset-2">
+        <form action="http:\\localhost" method="post" class="form-horizontal" th:action="@{'/postratings'}">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="card">
+                        <h5 class="card-title">Start date</h5>
+                        <input name="startdate" type="date" th:value="${request.get(0)}" required="required"
+                               pattern="{1,20}" class="form-control">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="card">
+                        <h5 class="card-title">End date</h5>
+                        <input name="enddate" type="date" required="required" th:value="${request.get(1)}"
+                               pattern="{1,20}" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="card">
+                        <select name="criterion">
+                            <option class="dropdown-item" text="criterion" value="AHT"
+                                    th:selected="${request.get(2).equals('AHT')}">
+                                AHT
+                            </option>
+                            <option class="dropdown-item" text="criterion" value="CSAT"
+                                    th:selected="${request.get(2).equals('CSAT')}">
+                                CSAT
+                            </option>
+                            <option class="dropdown-item" text="criterion" value="CDSAT"
+                                    th:selected="${request.get(2).equals('CDSAT')}">
+                                CDSAT
+                            </option>
+
+                        </select>
+                    </div>
+                    <br>
+                    <div class="card">
+                        <select name="exp">
+                            <option class="dropdown-item" text="exp" value="all"
+                                    th:selected="${request.get(3).equals('all')}">
+                                All
+                            </option>
+                            <option class="dropdown-item" text="exp" value="first"
+                                    th:selected="${request.get(3).equals('first')}">
+                                1st week
+                            </option>
+                            <option class="dropdown-item" text="exp" value="second"
+                                    th:selected="${request.get(3).equals('second')}">
+                                2nd week
+                            </option>
+                            <option class="dropdown-item" text="exp" value="third"
+                                    th:selected="${request.get(3).equals('third')}">
+                                3d week
+                            </option>
+                            <option class="dropdown-item" text="exp" value="fourth"
+                                    th:selected="${request.get(3).equals('fourth')}">
+                                4th week
+                            </option>
+                            <option class="dropdown-item" text="exp" value="month"
+                                    th:selected="${request.get(3).equals('month')}">
+                                Month
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="card">
+                        <button type="submit" class="btn btn-primary ">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+
+        <br>
+        <br>
+        <div class="row" th:if="${error ne null}">
+            <div class="table-responsive">
+                <p th:text="${error}"></p>
+            </div>
+        </div>
+        <div class="col-md-4 offset-4" th:if="${#lists.isEmpty(operators)and request.get(4).equals('not null')}">
+            <div class="table-responsive">
+                <p th:text="${'No data found for chosen period'}"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row " th:if="${not #lists.isEmpty(data) and not #lists.isEmpty(operators) and  error == null}">
+        <div class="col-md-6 offset-4">
+            <p th:text="'Рейтинг по '+${request.get(2)}+' за период с '+${request.get(0)}+' по '+${request.get(1)}"></p>
+        </div>
+        <div class="col-md-7 offset-2">
+        <canvas id="aht_bar_chart">
+        </canvas>
+        <script type="text/javascript" th:inline="javascript">
+            new Chart(document.getElementById("aht_bar_chart"), {
+                type: 'horizontalBar',
+                data: {
+                    labels: /*[[ ${operators} ]]*/,
+                    datasets: [
+                        {
+                            backgroundColor: "#3e95cd",
+                            data: /*[[ ${data} ]]*/,
+                        }
+                    ]
+                },
+                options: {
+                    legend: { display: false},
+                }
+            });
+        </script>
+    </div>
+    </div>
+
+
+</div>
+</body>
+</html>

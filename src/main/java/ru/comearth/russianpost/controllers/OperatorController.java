@@ -86,6 +86,7 @@ public class OperatorController {
             operatorService.saveOperatorCommand(operatorCommand);
         } catch (Exception e) {
             error=e.getMessage();
+            e.printStackTrace();
         }
         return "redirect:/operators/showall";
     }
@@ -105,6 +106,7 @@ public class OperatorController {
         } catch (Exception e) {
             System.out.println(e.getMessage());
             error=e.getMessage();
+            e.printStackTrace();
             return "redirect:/operators/new";
         }
         return "redirect:/operators/showall";

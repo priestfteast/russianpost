@@ -6,7 +6,6 @@ import ru.comearth.russianpost.domain.Operator;
 import ru.comearth.russianpost.repositories.CSATRepository;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
 
 @Service
