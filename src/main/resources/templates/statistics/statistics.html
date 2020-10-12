@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Statistics</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+</head>
+
+<body>
+<br>
+<div class="container-fluid">
+    <div class="container col-md-8 offset-2">
+        <form action="http:\\localhost" method="post" class="form-horizontal" th:action="@{'/poststats'}">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="card">
+                        <h5 class="card-title">Start date</h5>
+                        <input name="startdate" type="date" th:value="${request.get(0)}" required="required"
+                               pattern="{1,20}" class="form-control">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="card">
+                        <h5 class="card-title">End date</h5>
+                        <input name="enddate" type="date" required="required" th:value="${request.get(1)}"
+                               pattern="{1,20}" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="card">
+                        <select name="operator">
+                            <option class="dropdown-item" text="all" value="[all]"
+                                    th:selected="${request.get(2).equals('[all]')}">
+                                All operators
+                            </option>
+                            <option class="dropdown-item" th:each="operator : ${operators}"
+                                    th:text="${operator.fullName}"
+                                    th:value="${operator.fullName}" th:selected="${request.get(2).equals(operator.fullName)}">
+                                Name
+                            </option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="card">
+                        <select name="criterion">
+                            <option class="dropdown-item" text="filter" value="CSAT"
+                                    th:selected="${request.get(3).equals('CSAT')}">
+                                CSAT
+                            </option>
+                            <option class="dropdown-item" text="filter" value="AHT"
+                                    th:selected="${request.get(3).equals('AHT')}">
+                                AHT
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="card">
+                        <button type="submit" class="btn btn-primary ">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+
+        <br>
+        <br>
+        <div class="row" th:if="${error ne null}">
+            <div class="table-responsive">
+                <p th:text="${error}"></p>
+            </div>
+        </div>
+        <div class="col-md-4 offset-4" th:if="${#lists.isEmpty(days)and request.get(4).equals('not null')}">
+            <div class="table-responsive">
+                <p th:text="${'No data found for chosen period'}"></p>
+            </div>
+        </div>
+
+
+    <div class="row " th:if="${request.get(3).equals('CSAT')and not #lists.isEmpty(days) and  error == null}">
+        <div class="col-md-10">
+        <ul th:each="csat : ${csatstrings}">
+            <li th:text="${csat}">text</li>
+        </ul>
+        </div>
+    </div>
+
+    <div class="row"  th:if="${request.get(3).equals('AHT')and not #lists.isEmpty(days) and  error == null}">
+
+        <div class="table-responsive" th:if="${not #lists.isEmpty(operators)}">
+            <table class="table table-hover">
+                <thead class="thead-inverse">
+                <tr>
+                    <th>Name</th>
+                    <th>Period</th>
+                    <th>AHT</th>
+                    <th>Hold</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr >
+                    <!--/*@thymesVar id="operator" type="ru.comearth.russianpost.domain.Operator"*/-->
+                    <td th:text= "${request.get(2).equals('[all]')} ? 'Общие данные':${request.get(2)}">Tasty Goodnees 3</td>
+                    <td th:text="${request.get(0)+' - '+request.get(1)}+' ('+${days.size()}+' дней)'">Tasty Goodnees 3</td>
+                    <td th:text="${overallstats.getAHT()}">Fire cause</td>
+                    <td th:text="${overallstats.getHold()}">Fire cause</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+        <br>
+            <br>
+        <br>
+
+        <div class="row"  th:if="${request.get(3).equals('AHT')and not #lists.isEmpty(days) and  error == null}">
+        <div class="table-responsive" th:if="${not #lists.isEmpty(operators)}">
+            <table class="table table-hover">
+                <thead class="thead-inverse">
+                <tr>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>AHT</th>
+                    <th>Hold</th>
+                </tr>
+                </thead>
+                <tbody id="myTable">
+                <tr th:each="ts : ${timestats}">
+                    <td th:text="${ts.getDate()}">Tasty Goodnees 3</td>
+                    <td th:text="${ts.getName()}">Tasty Goodnees 3</td>
+                    <td th:text="${ts.getAHT()}">Fire cause</td>
+                    <td th:text="${ts.getHold()}">Fire cause</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    </div>
+</div>
+
+</body>
+</html>

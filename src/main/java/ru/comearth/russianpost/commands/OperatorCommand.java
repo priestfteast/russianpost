@@ -23,7 +23,7 @@ public class OperatorCommand {
         private Long id;
 
         @NotEmpty
-        @Size(min = 2, max = 30)
+        @Size(min = 2, max = 50)
         private String fullName;
 
         @javax.validation.constraints.NotNull

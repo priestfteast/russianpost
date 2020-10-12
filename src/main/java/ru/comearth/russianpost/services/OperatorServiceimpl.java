@@ -42,7 +42,6 @@ public class OperatorServiceimpl implements OperatorService {
         }
     }
 
-
     @Override
     public Operator findById(Long l)  {
         Optional<Operator> operatorOptional = operatorRepository.findById(l);

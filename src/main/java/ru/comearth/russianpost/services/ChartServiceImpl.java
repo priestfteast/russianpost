@@ -66,7 +66,7 @@ public class ChartServiceImpl implements ChartService {
             List<Operator> operators = operatorService.getAllOperators("[all]");
             operators.forEach(operator-> {
                 StringBuilder sb = new StringBuilder();
-                sb.append(" За период с "+startDate+ " по "+endDate+" CSAT "+operator.getFullName() +" = ");
+                sb.append(operator.getFullName()+" CSAT = ");
                 sb.append(csatService.getOperatorCSAT(operator, startDate, endDate));
                 sb.append(" DCSAT = "+ csatService.getOperatorDCSAT(operator, startDate, endDate));
                 if(!sb.toString().contains("NaN%"))
@@ -81,14 +81,14 @@ public class ChartServiceImpl implements ChartService {
 
             days.forEach(date-> {
                 StringBuilder sb = new StringBuilder();
-                sb.append(" За  "+date+" CSAT "+operator.getFullName() +" = ");
-                sb.append(csatService.getOperatorCSAT(operator, date, date));
+                sb.append(" За  "+date+" CSAT = "+ csatService.getOperatorCSAT(operator, date, date));
                 sb.append(" DCSAT = "+ csatService.getOperatorDCSAT(operator, date, date));
                 if(!sb.toString().contains("NaN%"))
                     result.add(sb.toString().replaceAll("\\.",","));
             });
-            String overAllStats = " За период с "+startDate+ " по "+endDate+" общий CSAT  = "+ csatService.getOperatorCSAT(operator, startDate, endDate)+
-                    " общий DCSAT  = "+csatService.getOperatorDCSAT(operator, startDate,endDate);
+            String overAllStats = " За период с "+startDate+ " по "+endDate+" "+operator.getFullName()+
+                    " общий CSAT  = "+ csatService.getOverallCSAT( startDate, endDate)+
+                    " общий DCSAT  = "+csatService.getOverallDCSAT(startDate,endDate);
             result.add(0,overAllStats.replaceAll("\\.",","));
         }
             return result;
@@ -96,7 +96,7 @@ public class ChartServiceImpl implements ChartService {
     }
 
     @Override
-    public List<Double> getCSATasDouble(LocalDate startDate, LocalDate endDate, String name, List<LocalDate> days) {
+    public List<Double> getCSATasDouble( String name, List<LocalDate> days) {
         List<Double> result = new ArrayList<>();
 
         if (name.equals("[all]")) {
@@ -110,7 +110,7 @@ public class ChartServiceImpl implements ChartService {
     }
 
     @Override
-    public List<Double> getDCSATasDouble(LocalDate startDate, LocalDate endDate, String name, List<LocalDate> days) {
+    public List<Double> getDCSATasDouble(String name, List<LocalDate> days) {
         List<Double> result = new ArrayList<>();
 
         if (name.equals("[all]")) {
@@ -124,7 +124,24 @@ public class ChartServiceImpl implements ChartService {
     }
 
     @Override
-    public List<Integer> getAHTData(LocalDate startDate, LocalDate endDate, String name, List<LocalDate> days) {
+    public List<TimeStats> getTimeStatsData(String name, List<LocalDate> days) {
+        List<TimeStats> result = new ArrayList<>();
+
+        if (name.equals("[all]")) {
+            if(days.size()==1)
+                result.addAll(timeStatsRepository.findAllByDateBetween(days.get(0),days.get(0)));
+            else
+                days.forEach(date -> result.add(timeStatsService.getOverallStats(date,date)));
+        }
+        else {
+            Operator operator = operatorService.findByName(name);
+            days.forEach(date -> result.add(timeStatsService.getOverallOperatorStats(operator, date,date)));
+        }
+        return result;
+    }
+
+    @Override
+    public List<Integer> getAHTData( String name, List<LocalDate> days) {
         List<Integer> result = new ArrayList<>();
 
         if (name.equals("[all]")) {
@@ -139,7 +156,7 @@ public class ChartServiceImpl implements ChartService {
     }
 
     @Override
-    public List<Integer> getHoldData(LocalDate startDate, LocalDate endDate, String name, List<LocalDate> days) {
+    public List<Integer> getHoldData(String name, List<LocalDate> days) {
         List<Integer> result = new ArrayList<>();
 
         if (name.equals("[all]")) {
@@ -205,6 +222,23 @@ public class ChartServiceImpl implements ChartService {
     @Override
     public TimeStats countAverageTimeStats(LocalDate start, LocalDate end){
         return timeStatsService.countAverageStats(timeStatsRepository.findAllByDateBetween(start,end));
+    }
+
+    @Override
+    public List<TimeStats> uniteDaysAndStats(List<LocalDate> days, List<TimeStats> stats, String operator){
+
+            if(days.size()!=stats.size())
+                return stats;
+
+            for (int i = 0; i < stats.size(); i++) {
+                stats.get(i).setDate(days.get(i));
+                if(operator.equals("[all]"))
+                    stats.get(i).setName("All operators");
+                else
+                    stats.get(i).setName(operator);
+            }
+
+            return stats;
     }
 
 }

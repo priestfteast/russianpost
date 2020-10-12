@@ -65,10 +65,8 @@ public class ChartsController {
                 List<String> csatStrings = (days.size()>0)? chartService.getCSATasString(LocalDate.parse(request.get(0)),
                         LocalDate.parse(request.get(1)), request.get(2), days) : new ArrayList<>();
                 model.addAttribute("csatstrings",csatStrings);
-                List<Double> dcsats = (days.size()>0)? chartService.getDCSATasDouble(LocalDate.parse(request.get(0)),
-                        LocalDate.parse(request.get(1)), request.get(2), days) : new ArrayList<>();
-                List<Double> csats = (days.size()>0)? chartService.getCSATasDouble(LocalDate.parse(request.get(0)),
-                        LocalDate.parse(request.get(1)), request.get(2), days) : new ArrayList<>();
+                List<Double> dcsats = (days.size()>0)? chartService.getDCSATasDouble(request.get(2), days) : new ArrayList<>();
+                List<Double> csats = (days.size()>0)? chartService.getCSATasDouble(request.get(2), days) : new ArrayList<>();
                 model.addAttribute("csats",csats);
                 model.addAttribute("dcsats",dcsats);
                if(request.get(2).equals("[all]")) {
@@ -83,12 +81,10 @@ public class ChartsController {
             }
             else
             {
-                List<Integer> timeStats = (days.size()>0)? chartService.getAHTData(LocalDate.parse(request.get(0)),
-                        LocalDate.parse(request.get(1)), request.get(2), days) : new ArrayList<>();
+                List<Integer> timeStats = (days.size()>0)? chartService.getAHTData(request.get(2), days) : new ArrayList<>();
 
                 List<Integer> target = Collections.nCopies(days.size(), 180);
-                List<Integer> hold = (days.size()>0)? chartService.getHoldData(LocalDate.parse(request.get(0)),
-                        LocalDate.parse(request.get(1)), request.get(2), days) : new ArrayList<>();
+                List<Integer> hold = (days.size()>0)? chartService.getHoldData(request.get(2), days) : new ArrayList<>();
                 Double averageAht = chartService.countAverageTimeStats(LocalDate.parse(request.get(0)),LocalDate.parse(request.get(1))).getAHT();
                 Double averageHold = chartService.countAverageTimeStats(LocalDate.parse(request.get(0)),LocalDate.parse(request.get(1))).getHold();
                 List<Double> ahtByExperience = chartService.getAhtByExperience(request.get(2),
