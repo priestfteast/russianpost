@@ -92,6 +92,13 @@
             <li class="nav-item">
                 <a class="nav-link" href="#" th:href="${'/upload'}" style="font-size: larger;font-weight: bold">Upload</a>
             </li>
+            <li class="nav-item">
+                <div sec:authentication="name">
+                </div>
+            </li>
+            <li class="nav-item">
+                <a th:href="@{/logout}">, Logout</a>
+            </li>
         </ul>
     </div>
 </nav>
