@@ -69,10 +69,12 @@ public class ChartServiceImpl implements ChartService {
                 sb.append(operator.getFullName()+" CSAT = ");
                 sb.append(csatService.getOperatorCSAT(operator, startDate, endDate));
                 sb.append(" DCSAT = "+ csatService.getOperatorDCSAT(operator, startDate, endDate));
+                sb.append(" за "+startDate+ "-"+endDate);
                 if(!sb.toString().contains("NaN%"))
                 result.add(sb.toString().replaceAll("\\.",","));
             });
-            String overAllStats = " За период с "+startDate+ " по "+endDate+" общий CSAT  = "+ csatService.getOverallCSAT( startDate, endDate)+
+            String overAllStats = " За период с "+startDate+ " по "+endDate+
+                    " общий CSAT  = "+ csatService.getOverallCSAT( startDate, endDate)+
                     " общий DCSAT  = "+csatService.getOverallDCSAT(startDate,endDate);
             result.add(0,overAllStats.replaceAll("\\.",","));
         }
@@ -81,14 +83,16 @@ public class ChartServiceImpl implements ChartService {
 
             days.forEach(date-> {
                 StringBuilder sb = new StringBuilder();
-                sb.append(" За  "+date+" CSAT = "+ csatService.getOperatorCSAT(operator, date, date));
+                sb.append(operator.getFullName()+" CSAT = ");
+                sb.append(csatService.getOperatorCSAT(operator, date, date));
                 sb.append(" DCSAT = "+ csatService.getOperatorDCSAT(operator, date, date));
+                sb.append(" за "+date);
                 if(!sb.toString().contains("NaN%"))
                     result.add(sb.toString().replaceAll("\\.",","));
             });
-            String overAllStats = " За период с "+startDate+ " по "+endDate+" "+operator.getFullName()+
-                    " общий CSAT  = "+ csatService.getOverallCSAT( startDate, endDate)+
-                    " общий DCSAT  = "+csatService.getOverallDCSAT(startDate,endDate);
+            String overAllStats = " За период с "+startDate+ " по "+endDate+
+                    " общий CSAT  = "+ csatService.getOperatorCSAT(operator, startDate, endDate)+
+                    " общий DCSAT  = "+csatService.getOperatorDCSAT(operator, startDate,endDate);
             result.add(0,overAllStats.replaceAll("\\.",","));
         }
             return result;

@@ -83,6 +83,12 @@
                 <p th:text="${'No data found for chosen period'}"></p>
             </div>
         </div>
+        <div class="col-md-1" th:if="${not #lists.isEmpty(days) and  error == null}">
+            <form action="http:\\localhost" enctype="multipart/form-data" method="get"
+                  th:action="@{'/excel'}">
+                <input  src="#" th:src="@{/images/xls.png}" style="height: 40px" class="file"  name="imagefile" type="image">
+            </form>
+        </div>
 
 
     <div class="row " th:if="${request.get(3).equals('CSAT')and not #lists.isEmpty(days) and  error == null}">

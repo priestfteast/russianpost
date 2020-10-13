@@ -55,7 +55,7 @@ public class CSATServiceImpl implements CSATService {
         double totalCalls = stats.stream().filter(csat1 -> csat1.getOverallScore()>0.0).count();
         double csat = fourAndFive*100/totalCalls;
 
-        return cutDouble(csat)+"%("+fourAndFive+" из "+totalCalls+")";
+        return cutDouble(csat)+"% ("+fourAndFive+" из "+totalCalls+")";
     }
 
     @Override
@@ -65,7 +65,7 @@ public class CSATServiceImpl implements CSATService {
         double totalCalls = stats.stream().filter(csat1 -> csat1.getOverallScore()>0.0).count();
         double csat = fourAndFive*100/totalCalls;
 
-        return cutDouble(csat)+"%("+fourAndFive+" из "+totalCalls+")";
+        return cutDouble(csat)+"% ("+fourAndFive+" из "+totalCalls+")";
     }
 
     @Override
@@ -75,7 +75,7 @@ public class CSATServiceImpl implements CSATService {
         double totalCalls = stats.stream().filter(csat1 -> csat1.getOverallScore()>0.0).count();
         double dcsat = ones*100/totalCalls;
 
-        return cutDouble(dcsat)+"%("+ones+" из "+totalCalls+")";
+        return cutDouble(dcsat)+"% ("+ones+" из "+totalCalls+")";
     }
 
     @Override
@@ -85,7 +85,7 @@ public class CSATServiceImpl implements CSATService {
         double totalCalls = stats.stream().filter(csat1 -> csat1.getOverallScore()>0.0).count();
         double dcsat = ones*100/totalCalls;
 
-        return cutDouble(dcsat)+"%("+ones+" из "+totalCalls+")";
+        return cutDouble(dcsat)+"% ("+ones+" из "+totalCalls+")";
     }
 
     @Override
