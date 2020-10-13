@@ -50,7 +50,7 @@ public class StatsController {
         initialRequest.add(LocalDate.now().toString().substring(0, 8) + "01");
         initialRequest.add(LocalDate.now().toString());
         initialRequest.add("[all]");
-        initialRequest.add("CSAT");
+        initialRequest.add("AHT");
         initialRequest.add("null");
 
         try{

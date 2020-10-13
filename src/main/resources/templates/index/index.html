@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+</head>
+<body>
+
+<br>
+<div class="container col-md-8 offset-2">
+
+    <!--    <p>Spring Security Thymeleaf tutorial</p>-->
+    <!--    <div sec:authorize="hasRole('USER')">Text visible to user.</div>-->
+    <!--    <div sec:authorize="hasRole('ADMIN')">Text visible to admin.</div>-->
+    <!--    <div sec:authorize="isAuthenticated()">-->
+    <!--        Text visible only to authenticated users.-->
+    <!--    </div>-->
+    <!--    Authenticated username:-->
+    <!--    <div sec:authentication="name"></div>-->
+    <!--    Authenticated user roles:-->
+    <!--    <div sec:authentication="principal.authorities"></div>-->
+
+    <div class="row" th:if="${error ne null}">
+        <div class="table-responsive">
+            <p th:text="${error}"></p>
+        </div>
+    </div>
+    <div class="row" th:if="${error == null}">
+        <div class="col-md-3">
+            <div class="card" style="width: 16rem;">
+                <img  src="../static/images/employee.jpg" th:src="@{/images/employee.jpg}" class="card-img-top" alt="...">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" style="font-weight: bold;text-decoration: underline" th:text="${'На '+date.toString()+':'}">
+                        На апрель 2020:</li>
+                    <li class="list-group-item" th:text="${'Работает: '+actualoperators+' чел.'}">Работает: 45 чел.</li>
+                    <li class="list-group-item" th:text="${'Было допущено: '+alloperators+' чел.'}">Было допущено: 45 чел.</li>
+                    <li class="list-group-item" th:text="${'Уволено/Уволились: '+firedoperators+' чел.'}">Уволено/Уволились: 5 чел.</li>
+                </ul>
+                <div class="card-body">
+                    <a href="#" class="card-link" th:href="${'/operators/showall.html'}">Операторы</a>
+                    <a href="#" class="card-link" th:href="${'/ratings'}">Рейтинги</a>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="col-md-3 offset-1">
+            <div class="card" style="width: 16rem;">
+                <img  src="../static/images/call.jpg" th:src="@{/images/call.jpg}" class="card-img-top" alt="...">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" style="font-weight: bold;text-decoration: underline "
+                        th:text="${'За '+date.getMonth()+' '+date.getYear()+':'}">За апрель 2020:</li>
+                    <li class="list-group-item"  th:text="${'Принято звонков: '+stats.getTotalCalls().intValue()}">Принято входящих: 45</li>
+                    <li class="list-group-item" th:text="${'Средний AHT: '+stats.getAHT().intValue()+' сек.'}">Средний AHT: 200 сек.</li>
+                    <li class="list-group-item" th:text="${'Средний Hold: '+stats.getHold().intValue()+' сек.'}">Средний Hold: 12 сек.</li>
+                </ul>
+                <div class="card-body">
+                    <a href="#" class="card-link" th:href="${'/statistics'}">Статистика</a>
+                    <a href="#" class="card-link" th:href="${'/statistics'}">Статистика</a>
+                        </div>
+                    </div>
+                </div>
+       
+
+        <div class="col-md-3 offset-1">
+            <div class="card" style="width: 16rem;">
+                <img  src="../static/images/stats.jpg" th:src="@{/images/stats.jpg}" class="card-img-top" alt="...">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item " style="font-weight: bold;text-decoration: underline"
+                        th:text="${'За '+date.getMonth()+' '+date.getYear()+':'}">За апрель 2020:</li>
+                    <li class="list-group-item" th:text="${'Всего оценено: '+csatcount}">Всего оценено: 1444</li>
+                    <li class="list-group-item" th:text="${'Средний CSAT: '+csat}">Средний CSAT: 2%</li>
+                    <li class="list-group-item" th:text="${'Средний DCSAT: '+dcsat}">Средний DCSAT: 2%</li>
+                </ul>
+                <div class="card-body">
+                    <a href="#" class="card-link" th:href="${'/statistics'}">Статистика</a>
+                    <a href="#" class="card-link" th:href="${'/charts'}">Инфографика</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>

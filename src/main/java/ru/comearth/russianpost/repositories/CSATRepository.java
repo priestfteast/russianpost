@@ -27,4 +27,6 @@ public interface CSATRepository extends JpaRepository<CSAT,Long> {
     @Query("SELECT DISTINCT date FROM CSAT")
     List<LocalDate> findDistinctDates();
 
+    int countAllByDateBetween(LocalDate start, LocalDate end);
+
 }

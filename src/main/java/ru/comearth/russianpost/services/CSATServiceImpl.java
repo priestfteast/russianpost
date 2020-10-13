@@ -105,8 +105,14 @@ public class CSATServiceImpl implements CSATService {
         System.out.println("Deleted statistics for "+date);
     }
 
+    @Override
+    public int countCSATs(LocalDate start, LocalDate end){
+        return csatRepository.countAllByDateBetween(start,end);
+    }
+
     public String cutDouble (Double number){
         return String.format("%.3f",number).replaceFirst(",",".");
     }
+
 
 }

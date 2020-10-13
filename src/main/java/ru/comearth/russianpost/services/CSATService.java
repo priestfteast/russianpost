@@ -27,4 +27,5 @@ public interface CSATService {
 
     void saveAll(List<CSAT> stats);
 
+    int countCSATs(LocalDate start, LocalDate end);
 }
