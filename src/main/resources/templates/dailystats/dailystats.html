@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'dailystats')}">
+<head>
+    <meta charset="UTF-8">
+    <title id="pageTitle">Daily Stats</title>
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="container col-md-6 offset-3">
+        <div class="card-body">
+            <h5 class="card-title" style="color: #0275d8">Daily Stats</h5>
+
+            <div class="row" th:if="${error ne null}">
+                <div class="table-responsive">
+                    <p th:text="${error}" style="color: red"></p>
+                </div>
+            </div>
+            <br>
+            <form  th:action="@{'/postdailystats'}" method="post" class="form-horizontal">
+                <div class="card">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>Date:</p>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" name="date" placeholder="Current date"
+                                   th:value="${request.get(0)}">
+                        </div>
+                    </div>
+                    <br>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>Operators:</p>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" name="operators" placeholder="Operators quantity"
+                                   th:value="${request.get(1)}">
+                        </div>
+                    </div>
+                <br>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>Trainees:</p>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" name="trainees" placeholder="Trainees quantity"
+                                   th:value="${request.get(2)}">
+                        </div>
+                    </div>
+                    <br>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>Hours:</p>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" name="hours" placeholder="Hours to pay"
+                                   th:value="${request.get(3)}">
+                        </div>
+                    </div>
+                    <br>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
