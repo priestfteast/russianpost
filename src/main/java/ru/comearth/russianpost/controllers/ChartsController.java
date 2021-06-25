@@ -9,16 +9,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.comearth.russianpost.domain.CSAT;
 import ru.comearth.russianpost.domain.Operator;
 import ru.comearth.russianpost.domain.TimeStats;
-import ru.comearth.russianpost.services.CSATService;
-import ru.comearth.russianpost.services.ChartService;
-import ru.comearth.russianpost.services.OperatorService;
-import ru.comearth.russianpost.services.TimeStatsService;
+import ru.comearth.russianpost.services.*;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 
 @Controller
 public class ChartsController {
@@ -27,12 +28,14 @@ public class ChartsController {
     private final ChartService chartService;
     private final CSATService csatService;
     private final TimeStatsService timeStatsService;
+    private final TimeService timeService;
 
-    public ChartsController(OperatorService operatorService, ChartService chartService, CSATService csatService, TimeStatsService timeStatsService) {
+    public ChartsController(OperatorService operatorService, ChartService chartService, CSATService csatService, TimeStatsService timeStatsService, TimeService timeService) {
         this.operatorService = operatorService;
         this.chartService = chartService;
         this.csatService = csatService;
         this.timeStatsService = timeStatsService;
+        this.timeService = timeService;
     }
 
     private List<CSAT> csats = new ArrayList<>();
@@ -52,7 +55,7 @@ public class ChartsController {
         try{
         request = (request.size() == 0) ? new ArrayList(initialRequest) : request;
 
-            ArrayList<Operator> operators = (ArrayList<Operator>) operatorService.getAllOperators(request.get(2));
+            List<Operator> operators = operatorService.getAllOperators("[actual]");
             Collections.sort(operators, Comparator.comparing(Operator::getFullName));
 
             model.addAttribute("operators", operators);
@@ -60,11 +63,33 @@ public class ChartsController {
 
             List<LocalDate> days = chartService.getChartDays(LocalDate.parse(request.get(0)),
                     LocalDate.parse(request.get(1)), request.get(2), request.get(3));
+            List<LocalDate> allDays = Stream.iterate(LocalDate.parse(request.get(0)), date -> date.plusDays(1))
+                    .limit(ChronoUnit.DAYS.between(LocalDate.parse(request.get(0)), LocalDate.parse(request.get(1)).plusDays(1))).collect(Collectors.toList());
+
+            List<LocalDate> weeks = timeService.getWeeksAsDates(allDays);
+            model.addAttribute("weeks", timeService.getWeeksAsStrings(weeks));
+
+            List<Double> ahtByWeeks = timeService.getAhtByWeeks(weeks,request.get(2));
+            List<String> dcsatByWeeks = timeService.getDcsatByWeeks(weeks,request.get(2));
+            List<String> csatByWeeks = timeService.getCsatByWeeks(weeks,request.get(2));
+            model.addAttribute("ahtbyweeks", ahtByWeeks);
+            model.addAttribute("dcsatbyweeks",dcsatByWeeks);
+            model.addAttribute("csatbyweeks",csatByWeeks);
+
+
+
+            if(!request.get(2).equals("[all]")) {
+                Operator op =operatorService.findByName(request.get(2));
+                int weeks2 = (int) ChronoUnit.WEEKS.between(op.getEmployementDate(),LocalDate.parse(request.get(1)));
+                String operInfo = String.format("Работает с %s (месяцев:%d недель:%d всего смен:%d)", op.getEmployementDate().toString(),
+                        weeks2/4, weeks2%4, chartService.countAllShifts(request.get(3), request.get(2)));
+                model.addAttribute("operinfo",operInfo);
+            }
+
+
 
             if(request.get(3).equals("CSAT")){
-                List<String> csatStrings = (days.size()>0)? chartService.getCSATasString(LocalDate.parse(request.get(0)),
-                        LocalDate.parse(request.get(1)), request.get(2), days) : new ArrayList<>();
-                model.addAttribute("csatstrings",csatStrings);
+
                 List<Double> dcsats = (days.size()>0)? chartService.getDCSATasDouble(request.get(2), days) : new ArrayList<>();
                 List<Double> csats = (days.size()>0)? chartService.getCSATasDouble(request.get(2), days) : new ArrayList<>();
                 model.addAttribute("csats",csats);
@@ -73,9 +98,9 @@ public class ChartsController {
                    model.addAttribute("averagecsat", csatService.getOverallCSAT(LocalDate.parse(request.get(0)), LocalDate.parse(request.get(1))));
                    model.addAttribute("averagedcsat", csatService.getOverallDCSAT(LocalDate.parse(request.get(0)), LocalDate.parse(request.get(1))));
                }else {
-                   model.addAttribute("averagecsat", csatService.getOperatorCSAT(operators.get(0),
+                   model.addAttribute("averagecsat", csatService.getOperatorCSAT(operatorService.findByName(request.get(2)),
                            LocalDate.parse(request.get(0)), LocalDate.parse(request.get(1))));
-                   model.addAttribute("averagedcsat", csatService.getOperatorDCSAT(operators.get(0),
+                   model.addAttribute("averagedcsat", csatService.getOperatorDCSAT(operatorService.findByName(request.get(2)),
                            LocalDate.parse(request.get(0)), LocalDate.parse(request.get(1))));
                }
             }
@@ -85,8 +110,8 @@ public class ChartsController {
 
                 List<Integer> target = Collections.nCopies(days.size(), 180);
                 List<Integer> hold = (days.size()>0)? chartService.getHoldData(request.get(2), days) : new ArrayList<>();
-                Double averageAht = chartService.countAverageTimeStats(LocalDate.parse(request.get(0)),LocalDate.parse(request.get(1))).getAHT();
-                Double averageHold = chartService.countAverageTimeStats(LocalDate.parse(request.get(0)),LocalDate.parse(request.get(1))).getHold();
+                Double averageAht = chartService.countAverageTimeStats(LocalDate.parse(request.get(0)),LocalDate.parse(request.get(1)),request.get(2)).getAHT();
+                Double averageHold = chartService.countAverageTimeStats(LocalDate.parse(request.get(0)),LocalDate.parse(request.get(1)),request.get(2)).getHold();
                 List<Double> ahtByExperience = chartService.getAhtByExperience(request.get(2),
                         LocalDate.parse(request.get(0)), LocalDate.parse(request.get(1)));
 
@@ -133,6 +158,15 @@ public class ChartsController {
         request.set(4,"not null");
 
         return "redirect:/charts";
+    }
+
+
+    public static void main(String[] args) {
+
+        List<LocalDate> dates = Stream.iterate(LocalDate.parse("2020-11-01"), date -> date.plusDays(1))
+                .limit(ChronoUnit.DAYS.between(LocalDate.parse("2020-11-01"), LocalDate.now().plusDays(1))).collect(Collectors.toList());
+
+       dates.forEach(System.out::println);
     }
 
 }

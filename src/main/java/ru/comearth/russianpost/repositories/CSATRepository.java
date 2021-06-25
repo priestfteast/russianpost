@@ -29,4 +29,7 @@ public interface CSATRepository extends JpaRepository<CSAT,Long> {
 
     int countAllByDateBetween(LocalDate start, LocalDate end);
 
+    @Query("SELECT  COUNT(distinct date) FROM CSAT where name=?1")
+    int countByName(String name);
+
 }

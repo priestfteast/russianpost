@@ -54,7 +54,7 @@ public class DailyStatsController {
         String operators = formData.getFirst("operators");request.set(1,operators);
         String trainees = formData.getFirst("trainees");request.set(2,trainees);
         String hours = formData.getFirst("hours");request.set(3,hours);
-        log.info("На "+date.replaceAll("-",".")+":"+"   В линии: "+operators+" чел.     В обучении: "+trainees+" чел.      Часов к оплате: "+hours);
+        log.info("На "+date.replaceAll("-",".")+":"+"   В линии: "+operators+" чел.     В обучении: "+trainees+" чел.      Часов: "+hours);
         return "redirect:/dailystats";
     }
 

@@ -23,13 +23,15 @@ public class RatingsController {
     private final CSATService csatService;
     private final TimeStatsService timeStatsService;
     private final RatingService ratingService;
+    private final TimeService timeService;
 
-    public RatingsController(OperatorService operatorService, ChartService chartService, CSATService csatService, TimeStatsService timeStatsService, RatingService ratingService) {
+    public RatingsController(OperatorService operatorService, ChartService chartService, CSATService csatService, TimeStatsService timeStatsService, RatingService ratingService, TimeService timeService) {
         this.operatorService = operatorService;
         this.chartService = chartService;
         this.csatService = csatService;
         this.timeStatsService = timeStatsService;
         this.ratingService = ratingService;
+        this.timeService = timeService;
     }
 
 
@@ -51,11 +53,24 @@ public class RatingsController {
                     LocalDate.parse(request.get(1)),request.get(2),request.get(3));
             List<Double> data = ratingService.getRating(operators,LocalDate.parse(request.get(0)),
                     LocalDate.parse(request.get(1)),request.get(2));
-            TreeMap<String, Double> dataMap = ratingService.getSortedRating(operators, data);
+            TreeMap<String, Double> dataMap = ratingService.getSortedRating(operators, data, request.get(1));
+            Integer[] categories = ratingService.countCategories(dataMap.values(),request.get(2));
 
             model.addAttribute("request", request);
             model.addAttribute("operators", dataMap.keySet());
             model.addAttribute("data", dataMap.values());
+            model.addAttribute("categories", categories);
+
+            List<LocalDate> weeks = timeService.getWeeksAsDates(timeService.getLastFourWeeks(LocalDate.parse(request.get(1))));
+            List<String> weeksAsStrings = timeService.getWeeksAsStrings(weeks);
+            model.addAttribute("weeks", weeksAsStrings);
+
+            List<Double> ahtByWeeks = timeService.getAhtByWeeks(weeks,"[all]");
+            List<String> dcsatByWeeks = timeService.getDcsatByWeeks(weeks,"[all]");
+            List<String> csatByWeeks = timeService.getCsatByWeeks(weeks,"[all]");
+            model.addAttribute("ahtbyweeks", ahtByWeeks);
+            model.addAttribute("dcsatbyweeks",dcsatByWeeks);
+            model.addAttribute("csatbyweeks",csatByWeeks);
 
             return "ratings/ratings";
         }

@@ -29,9 +29,10 @@ public class IndexController {
     public String showDailyStats(Model model) {
 
         try {
-            int allOperators = operatorService.getAllOperators("[all]").size();
-            int actualOperators = operatorService.getAllOperators("[actual]").size();
-            int firedOperators = operatorService.getAllOperators("[fired]").size();
+            Integer[] operatorsCount = operatorService.getOperatorsByMonth();
+            int actualOperators = operatorsCount[0];
+            int newoperators = operatorsCount[1];
+            int firedOperators = operatorsCount[2];
 
             LocalDate endDate = LocalDate.now();
             LocalDate startDate = LocalDate.parse(endDate.toString().substring(0, endDate.toString().length() - 2) + "01");
@@ -44,7 +45,7 @@ public class IndexController {
 
             model.addAttribute("date", LocalDate.now());
             model.addAttribute("actualoperators", actualOperators);
-            model.addAttribute("alloperators", allOperators);
+            model.addAttribute("newoperators", newoperators);
             model.addAttribute("firedoperators", firedOperators);
             model.addAttribute("stats", stats);
             model.addAttribute("csat", csat);

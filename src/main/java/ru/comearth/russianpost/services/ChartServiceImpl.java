@@ -7,7 +7,10 @@ import ru.comearth.russianpost.domain.TimeStats;
 import ru.comearth.russianpost.repositories.CSATRepository;
 import ru.comearth.russianpost.repositories.TimeStatsRepository;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -205,27 +208,43 @@ public class ChartServiceImpl implements ChartService {
         List<Double> result = new ArrayList<>();
                 List<TimeStats> stats = (name.equals("[all]")) ? timeStatsRepository.findAllByDateBetween(start, end) :
                 timeStatsRepository.findAllByOperatorAndDateBetween(operatorService.findByName(name),start,end);
-        result.add(timeStatsService.countAverageStats(stats.stream().filter(stats1->stats1.getOperator().getEmployementDate().
-                until(stats1.getDate()).getDays()<=7).collect(Collectors.toList())).getAHT());
-        result.add(timeStatsService.countAverageStats(stats.stream().filter(stats1->stats1.getOperator().getEmployementDate().
-                until(stats1.getDate()).getDays()>7 && stats1.getOperator().getEmployementDate().
-                until(stats1.getDate()).getDays()<=14).collect(Collectors.toList())).getAHT());
-        result.add(timeStatsService.countAverageStats(stats.stream().filter(stats1->stats1.getOperator().getEmployementDate().
-                until(stats1.getDate()).getDays()>=14 && stats1.getOperator().getEmployementDate().
-                until(stats1.getDate()).getDays()<=21).collect(Collectors.toList())).getAHT());
-        result.add(timeStatsService.countAverageStats(stats.stream().filter(stats1->stats1.getOperator().getEmployementDate().
-                until(stats1.getDate()).getDays()>21 && stats1.getOperator().getEmployementDate().
-                until(stats1.getDate()).getDays()<=30).collect(Collectors.toList())).getAHT());
-        result.add(timeStatsService.countAverageStats(stats.stream().filter(stats1->stats1.getOperator().getEmployementDate().
-                until(stats1.getDate()).getDays()>=30).collect(Collectors.toList())).getAHT());
+        result.add(timeStatsService.countAverageStats(stats.stream().filter(stats1->
+                ChronoUnit.DAYS.between(stats1.getOperator().getEmployementDate(), stats1.getDate())<=7).collect(Collectors.toList())).getAHT());
+        result.add(timeStatsService.countAverageStats(stats.stream().filter(stats1->ChronoUnit.DAYS.between(stats1.getOperator().
+                getEmployementDate(), stats1.getDate())>7 && ChronoUnit.DAYS.between(stats1.getOperator().getEmployementDate(), stats1.getDate())<=14)
+                .collect(Collectors.toList())).getAHT());
+        result.add(timeStatsService.countAverageStats(stats.stream().filter(stats1->ChronoUnit.DAYS.between(stats1.getOperator().
+                getEmployementDate(), stats1.getDate())>14 && ChronoUnit.DAYS.between(stats1.getOperator().getEmployementDate(), stats1.getDate())<=21)
+                .collect(Collectors.toList())).getAHT());
+        result.add(timeStatsService.countAverageStats(stats.stream().filter(stats1->ChronoUnit.DAYS.between(stats1.getOperator().
+                getEmployementDate(), stats1.getDate())>21 && ChronoUnit.DAYS.between(stats1.getOperator().getEmployementDate(), stats1.getDate())<=30)
+                .collect(Collectors.toList())).getAHT());
+        result.add(timeStatsService.countAverageStats(stats.stream().filter(stats1->ChronoUnit.DAYS.between(stats1.getOperator().
+                getEmployementDate(), stats1.getDate())>30 && ChronoUnit.DAYS.between(stats1.getOperator().getEmployementDate(), stats1.getDate())<=60)
+                .collect(Collectors.toList())).getAHT());
+        result.add(timeStatsService.countAverageStats(stats.stream().filter(stats1->ChronoUnit.DAYS.between(stats1.getOperator().
+                getEmployementDate(), stats1.getDate())>60).collect(Collectors.toList())).getAHT());
 
         return result;
 
     }
 
     @Override
-    public TimeStats countAverageTimeStats(LocalDate start, LocalDate end){
-        return timeStatsService.countAverageStats(timeStatsRepository.findAllByDateBetween(start,end));
+    public int countAllShifts(String query, String name) {
+
+        if(query.equals("AHT"))
+            return timeStatsRepository.countByName(name);
+        else
+            return csatRepository.countByName(name);
+    }
+
+    @Override
+    public TimeStats countAverageTimeStats(LocalDate start, LocalDate end, String name){
+        switch (name) {
+            case "[all]": return timeStatsService.countAverageStats(timeStatsRepository.findAllByDateBetween(start, end));
+            default: return timeStatsService.countAverageStats
+                    (timeStatsRepository.findAllByOperatorAndDateBetween(operatorService.findByName(name), start,end));
+        }
     }
 
     @Override
@@ -244,5 +263,6 @@ public class ChartServiceImpl implements ChartService {
 
             return stats;
     }
+
 
 }

@@ -2,7 +2,6 @@ package ru.comearth.russianpost.services;
 
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.comearth.russianpost.commands.OperatorCommand;
 import ru.comearth.russianpost.converters.OperatorCommandToOperator;
 import ru.comearth.russianpost.converters.OperatorToOperatorCommand;
@@ -11,7 +10,6 @@ import ru.comearth.russianpost.exceptions.NotFoundException;
 import ru.comearth.russianpost.repositories.OperatorRepository;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,6 +38,18 @@ public class OperatorServiceimpl implements OperatorService {
             case "[fired]" : return operatorRepository.findAll().stream().filter(operator -> operator.isFired()).collect(Collectors.toList());
             default: return operatorRepository.findAll();
         }
+    }
+
+    @Override
+    public Integer[] getOperatorsByMonth() {
+        Integer[] operators = new Integer[]{0,0,0};
+        List<Operator> allOperators = operatorRepository.findAll();
+        operators[0] = Math.toIntExact(allOperators.stream().filter(operator -> !operator.isFired()).count());
+        operators[1] = Math.toIntExact(allOperators.stream().filter(operator ->
+                operator.getEmployementDate().getMonth().equals(LocalDate.now().getMonth())).count());
+        operators[2] = Math.toIntExact(allOperators.stream().filter(operator ->
+                operator.getRetirementDate()!=null && operator.getRetirementDate().getMonth().equals(LocalDate.now().getMonth())).count());
+        return operators;
     }
 
     @Override

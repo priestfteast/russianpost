@@ -20,6 +20,8 @@ public interface TimeStatsRepository extends JpaRepository<TimeStats,Long> {
 
     void deleteAllByDate(LocalDate date);
 
+    int countByName(String name);
+
     @Query("SELECT DISTINCT date FROM TimeStats")
     List<LocalDate> findDistinctDates();
 }

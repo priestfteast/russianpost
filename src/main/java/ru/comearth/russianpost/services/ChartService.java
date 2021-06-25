@@ -24,7 +24,11 @@ public interface ChartService {
 
     List<Double> getAhtByExperience(String name, LocalDate start, LocalDate end);
 
-    TimeStats countAverageTimeStats(LocalDate start, LocalDate end);
+    TimeStats countAverageTimeStats(LocalDate start, LocalDate end, String name);
 
     List<TimeStats> uniteDaysAndStats(List<LocalDate> days, List<TimeStats> stats, String operator);
+
+    int countAllShifts(String query, String name);
+
+
 }

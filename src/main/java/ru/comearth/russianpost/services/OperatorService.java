@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface OperatorService {
     List<Operator> getAllOperators(String request);
+    Integer[] getOperatorsByMonth();
     Operator findById(Long l);
     Operator findByName(String name);
     OperatorCommand findCommandById(Long l);

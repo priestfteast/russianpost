@@ -71,6 +71,10 @@
                                     th:selected="${request.get(3).equals('month')}">
                                 Month
                             </option>
+                            <option class="dropdown-item" text="exp" value="two months"
+                                    th:selected="${request.get(3).equals('two months')}">
+                                Two months
+                            </option>
                         </select>
                     </div>
                 </div>
@@ -99,32 +103,317 @@
     </div>
 
     <div class="row " th:if="${not #lists.isEmpty(data) and not #lists.isEmpty(operators) and  error == null}">
-        <div class="col-md-6 offset-4">
-            <p th:text="'Рейтинг по '+${request.get(2)}+' за период с '+${request.get(0)}+' по '+${request.get(1)}"></p>
+        <div class="col-md-5 offset-1">
+            <p th:text="'Рейтинг по '+${request.get(2)}+' за период с '+${request.get(0).substring(8,10)+'-'+request.get(0).substring(5,7)+'-'+request.get(0).substring(0,4)}+
+            ' по '+${request.get(1).substring(8,10)+'-'+request.get(0).substring(5,7)+'-'+request.get(0).substring(0,4)}" style="font-weight: bold"></p>
         </div>
-        <div class="col-md-7 offset-2">
+        <div class="col-md-4" th:if="${request.get(2).equals('AHT')}">
+            <span class="badge badge-pill badge-success" th:text="${'180 ('+categories[0]+' чел.)'}">180</span>
+            <span class="badge badge-pill badge-info" th:text="${'210 ('+categories[1]+' чел.)'}">210</span>
+            <span class="badge badge-pill badge-warning" th:text="${'250 ('+categories[2]+' чел.)'}">250</span>
+            <span class="badge badge-pill badge-danger" th:text="${'>250 ('+categories[3]+' чел.)'}">>250</span>
+        </div>
+        <div class="col-md-4" th:if="${request.get(2).equals('CSAT')}">
+            <span class="badge badge-pill badge-success" th:text="${'95 ('+categories[0]+' чел.)'}">180</span>
+            <span class="badge badge-pill badge-info" th:text="${'90 ('+categories[1]+' чел.)'}">210</span>
+            <span class="badge badge-pill badge-warning" th:text="${'85 ('+categories[2]+' чел.)'}">250</span>
+            <span class="badge badge-pill badge-danger" th:text="${'>85 ('+categories[3]+' чел.)'}">>250</span>
+        </div>
+        <div class="col-md-4" th:if="${request.get(2).equals('CDSAT')}">
+            <span class="badge badge-pill badge-success" th:text="${'2 ('+categories[0]+' чел.)'}">180</span>
+            <span class="badge badge-pill badge-info" th:text="${'3 ('+categories[1]+' чел.)'}">210</span>
+            <span class="badge badge-pill badge-warning" th:text="${'5 ('+categories[2]+' чел.)'}">250</span>
+            <span class="badge badge-pill badge-danger" th:text="${'>5 ('+categories[3]+' чел.)'}">>250</span>
+        </div>
+        <div class="col-md-12" th:if="${request.get(2).equals('AHT')}">
         <canvas id="aht_bar_chart">
         </canvas>
         <script type="text/javascript" th:inline="javascript">
+
+            arrayLabel =[[${operators}]]
+            arrayData = [[${data}]]
+
+            arrayOfObj = arrayLabel.map(function(d, i) {
+                return {
+                    label: d,
+                    data: arrayData[i] || 0
+                };
+            });
+
+            sortedArrayOfObj = arrayOfObj.sort(function(a, b) {
+                return a.data - b.data;
+            });
+
+            newArrayLabel = [];
+            newArrayData = [];
+            sortedArrayOfObj.forEach(function(d){
+                newArrayLabel.push(d.label);
+                newArrayData.push(d.data);
+            });
+            shortenedArrayLabel = shortenNames(newArrayLabel)
+            // console.log(newArrayLabel);
+            // console.log(newArrayData);
+
+            let colors = getColors(newArrayData)
+
             new Chart(document.getElementById("aht_bar_chart"), {
                 type: 'horizontalBar',
                 data: {
-                    labels: /*[[ ${operators} ]]*/,
+                    labels: shortenedArrayLabel,
                     datasets: [
                         {
-                            backgroundColor: "#3e95cd",
-                            data: /*[[ ${data} ]]*/,
+
+                            data: newArrayData,
+                            backgroundColor: colors
+
                         }
                     ]
                 },
                 options: {
                     legend: { display: false},
+                    tooltips: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return tooltipItem.xLabel+' сек.  :  '+ newArrayLabel[tooltipItem.index]
+                            }
+                        }
+                    }
                 }
             });
+
+
+            function getColors(data) {
+                let colors =[]
+                for (let i = 0; i < data.length; i++) {
+                  if(data[i]<181)
+                      colors[i]="#28A745"
+                  else  if(data[i]>180 && data[i]<211)
+                        colors[i]="#17A2B8"
+                  else  if(data[i]>210 && data[i]<250)
+                      colors[i]="#FFC107"
+                    else
+                      colors[i]="#DC3545"
+                }
+                return colors
+            }
+
+
+            function shortenNames(names) {
+                let shortenedNames = []
+                for (let i = 0; i < names.length; i++) {
+                    shortenedNames[i] = names[i].substring(0, names[i].indexOf('.'))
+                }
+                return shortenedNames
+            }
+
+
         </script>
-    </div>
+
+
     </div>
 
+        <div class="col-md-12" th:if="${request.get(2).equals('CSAT')}">
+            <canvas id="aht_bar_chart2">
+            </canvas>
+            <script type="text/javascript" th:inline="javascript">
+
+                arrayLabel =[[${operators}]]
+                arrayData = [[${data}]]
+
+                arrayOfObj = arrayLabel.map(function(d, i) {
+                    return {
+                        label: d,
+                        data: arrayData[i] || 0
+                    };
+                });
+
+                sortedArrayOfObj = arrayOfObj.sort(function(a, b) {
+                    return b.data - a.data;
+                });
+
+                newArrayLabel = [];
+                newArrayData = [];
+                sortedArrayOfObj.forEach(function(d){
+                    newArrayLabel.push(d.label);
+                    newArrayData.push(d.data);
+                });
+                shortenedArrayLabel = shortenNames(newArrayLabel)
+                // console.log(newArrayLabel);
+                // console.log(newArrayData);
+
+                let colors = getColors(newArrayData)
+
+                new Chart(document.getElementById("aht_bar_chart2"), {
+                    type: 'horizontalBar',
+                    data: {
+                        labels: shortenedArrayLabel,
+                        datasets: [
+                            {
+
+                                data: newArrayData,
+                                backgroundColor: colors
+
+                            }
+                        ]
+                    },
+                    options: {
+                        legend: { display: false},
+                        tooltips: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.xLabel+' %  :  '+ newArrayLabel[tooltipItem.index]
+                                }
+                            }
+                        }
+                    }
+                });
+
+
+                function getColors(data) {
+                    let colors =[]
+                    for (let i = 0; i < data.length; i++) {
+                        if(data[i]>94)
+                            colors[i]="#28A745"
+                        else  if(data[i]<95 && data[i]>89)
+                            colors[i]="#17A2B8"
+                        else  if(data[i]<90 && data[i]>84)
+                            colors[i]="#FFC107"
+                        else
+                            colors[i]="#DC3545"
+                    }
+                    return colors
+                }
+
+
+                function shortenNames(names) {
+                    let shortenedNames = []
+                    for (let i = 0; i < names.length; i++) {
+                        shortenedNames[i] = names[i].substring(0, names[i].indexOf('.'))
+                    }
+                    return shortenedNames
+                }
+
+
+            </script>
+
+
+        </div>
+
+        <div class="col-md-12" th:if="${request.get(2).equals('CDSAT')}">
+            <canvas id="aht_bar_chart3">
+            </canvas>
+            <script type="text/javascript" th:inline="javascript">
+
+                arrayLabel =[[${operators}]]
+                arrayData = [[${data}]]
+
+                arrayOfObj = arrayLabel.map(function(d, i) {
+                    return {
+                        label: d,
+                        data: arrayData[i] || 0
+                    };
+                });
+
+                sortedArrayOfObj = arrayOfObj.sort(function(a, b) {
+                    return a.data - b.data;
+                });
+
+                newArrayLabel = [];
+                newArrayData = [];
+                sortedArrayOfObj.forEach(function(d){
+                    newArrayLabel.push(d.label);
+                    newArrayData.push(d.data);
+                });
+                shortenedArrayLabel = shortenNames(newArrayLabel)
+                // console.log(newArrayLabel);
+                // console.log(newArrayData);
+
+                let colors = getColors(newArrayData)
+
+                new Chart(document.getElementById("aht_bar_chart3"), {
+                    type: 'horizontalBar',
+                    data: {
+                        labels: shortenedArrayLabel,
+                        datasets: [
+                            {
+
+                                data: newArrayData,
+                                backgroundColor: colors
+
+                            }
+                        ]
+                    },
+                    options: {
+                        legend: { display: false},
+                        tooltips: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.xLabel+' %  :  '+ newArrayLabel[tooltipItem.index]
+                                }
+                            }
+                        }
+                    }
+                });
+
+
+                function getColors(data) {
+                    let colors =[]
+                    for (let i = 0; i < data.length; i++) {
+                        if(data[i]<=2)
+                            colors[i]="#28A745"
+                        else  if(data[i]>2 && data[i]<=3)
+                            colors[i]="#17A2B8"
+                        else  if(data[i]>3 && data[i]<=5)
+                            colors[i]="#FFC107"
+                        else
+                            colors[i]="#DC3545"
+                    }
+                    return colors
+                }
+
+
+                function shortenNames(names) {
+                    let shortenedNames = []
+                    for (let i = 0; i < names.length; i++) {
+                        shortenedNames[i] = names[i].substring(0, names[i].indexOf('.'))
+                    }
+                    return shortenedNames
+                }
+
+
+            </script>
+
+
+        </div>
+    </div>
+
+    <div class="row" th:if="${not #lists.isEmpty(weeks) and  error == null}">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-hover">
+
+                    <tr>
+                        <th></th>
+                        <th th:each="week : ${weeks}" th:text="${week}">week</th>
+                    </tr>
+                    <tr>
+                        <th>AHT</th>
+                        <th th:each="aht : ${ahtbyweeks}" th:text="${aht}" style="font-weight: normal">week</th>
+                    </tr>
+                    <tr>
+                        <th>CSAT</th>
+                        <th th:each="csat : ${csatbyweeks}" th:text="${csat}" style="font-weight: normal">week</th>
+                    </tr>
+                    <tr>
+                        <th>DCSAT</th>
+                        <th th:each="dcsat : ${dcsatbyweeks}" th:text="${dcsat}" style="font-weight: normal">week</th>
+                    </tr>
+
+
+                </table>
+            </div>
+        </div>
+    </div>
 
 </div>
 </body>

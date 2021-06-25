@@ -78,6 +78,7 @@
 </div>
 </div>
 
+
     <div class="row " th:if="${request.get(3).equals('CSAT')and not #lists.isEmpty(days) and  error == null}">
 
         <div class="col-md-8">
@@ -136,10 +137,9 @@
             <br>
             <div class="card" style="width: 18rem; height: 20rem">
                 <br>
-                <br>
 
                 <div class="card-body">
-                    <h6 class="card-title" th:text="${'С '+request.get(0) +'  по  '+request.get(1)}"></h6>
+                    <h6 class="card-title" th:text="${'С '+request.get(0) +'  по  '+request.get(1)+' (Смен: '+days.size()+')'}"></h6>
                     <p class="card-text" th:if="${request.get(2).equals('[all]')}"
                        th:text="${'Оценено операторов : '+opers}">Somefjmfhjjhjft.</p>
                     <p class="card-text" th:if="${request.get(2).equals('[all]')}"
@@ -147,7 +147,9 @@
                     <p class="card-text" th:if="${request.get(2).equals('[all]')}"
                        th:text="${'DCSAT = '+averagedcsat}">Somefjmfhjjhjft.</p>
                     <p class="card-text" th:if="${not request.get(2).equals('[all]')}"
-                       th:text="${request.get(2)+ ' : '}">Somefjmfhjjhjft.</p>
+                       th:text="${request.get(2)}">Somefjmfhjjhjft.</p>
+                    <p class="card-text" th:if="${not request.get(2).equals('[all]')}"
+                       th:text="${operinfo}">Somefjmfhjjhjft.</p>
                     <p class="card-text" th:if="${not request.get(2).equals('[all]')}"
                        th:text="${'CSAT = '+averagecsat}">Somefjmfhjjhjft.</p>
                     <p class="card-text" th:if="${not request.get(2).equals('[all]')}"
@@ -158,18 +160,19 @@
     </div>
 
     <div class="row " th:if="${request.get(3).equals('AHT')and not #lists.isEmpty(days) and  error == null}">
-        <div class="col-md-8">
-    <h6 class="card-title" th:text="${'С '+request.get(0) +'  по  '+request.get(1)}"></h6>
+        <div class="col-md-4">
+    <h6 class="card-title" th:text="${'С '+request.get(0) +'  по  '+request.get(1)+' (Смен: '+days.size()+')'}"></h6>
     <p class="card-text" th:if="${request.get(2).equals('[all]')}"
        th:text="${'Работало операторов : '+opers}">Somefjmfhjjhjft.</p>
     <p class="card-text" th:if="${request.get(2).equals('[all]')}"
        th:text="${'AHT = '+averageaht+'Hold = '+averagehold}">Somefjmfhjjhjft.</p>
     <p class="card-text" th:if="${not request.get(2).equals('[all]')}"
-       th:text="${request.get(2)+ ' : '}">Somefjmfhjjhjft.</p>
+       th:text="${request.get(2)}">Somefjmfhjjhjft.</p>
+     <p class="card-text" th:if="${not request.get(2).equals('[all]')}"
+       th:text="${operinfo}">Somefjmfhjjhjft.</p>
     <p class="card-text" th:if="${not request.get(2).equals('[all]')}"
-       th:text="${'AHT = '+averageaht+'Hold = '+averagehold}">Somefjmfhjjhjft.</p>
+       th:text="${'AHT = '+averageaht+' Hold = '+averagehold}">Somefjmfhjjhjft.</p>
         </div>
-
     </div>
 
     <div class="row " th:if="${request.get(3).equals('AHT')and not #lists.isEmpty(days) and  error == null}">
@@ -237,11 +240,11 @@
                 new Chart(document.getElementById("aht_bar_chart"), {
                     type: 'bar',
                     data: {
-                        labels: ["1st Week", "2nd Week", "3d Week", "4th Week", "Month"],
+                        labels: ["1st Week", "2nd Week", "3d Week", "4th Week", "Month", "Two & more"],
                         datasets: [
                             {
                                 label: "AHT (seconds)",
-                                backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", 'forestgreen'],
+                                backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", 'forestgreen','red'],
                                 data: /*[[ ${ahtbyexperience} ]]*/,
                             }
                         ]
@@ -256,11 +259,40 @@
                 });
             </script>
         </div>
+</div>
+
+    <br>
+    <br>
+
+    <div class="row" th:if="${not #lists.isEmpty(days) and  error == null}">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-hover">
+
+                    <tr>
+                        <th></th>
+                        <th th:each="week : ${weeks}" th:text="${week}">week</th>
+                    </tr>
+                    <tr>
+                        <th>AHT</th>
+                        <th th:each="aht : ${ahtbyweeks}" th:text="${aht}" style="font-weight: normal">week</th>
+                    </tr>
+                    <tr>
+                        <th>CSAT</th>
+                        <th th:each="csat : ${csatbyweeks}" th:text="${csat}" style="font-weight: normal">week</th>
+                    </tr>
+                    <tr>
+                        <th>DCSAT</th>
+                        <th th:each="dcsat : ${dcsatbyweeks}" th:text="${dcsat}" style="font-weight: normal">week</th>
+                    </tr>
 
 
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-</div>
-</div>
-</div>
+
 </body>
 </html>

@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.apache.log4j.Logger;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +24,13 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import ru.comearth.russianpost.controllers.DailyStatsController;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +67,7 @@ public class Bot extends TelegramLongPollingBot {
             sendMessage.setText(getAnswer(message.getText()))
             .setChatId(chatid);
             execute(sendMessage) ;
-        } catch (TelegramApiException | IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         log.info("new Update recieve: "+update.getMessage().getText()+".  Answer was: "+sendMessage.getText());
@@ -92,27 +100,39 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    public String getAnswer(String request) throws IOException {
+    public String getAnswer(String request) throws Exception {
 
             if(request.toLowerCase().contains("прив") || request.toLowerCase().contains("добр") ||
                 request.toLowerCase().contains("здравству") || request.toLowerCase().contains("hello")
                 || request.toLowerCase().contains("hi") || request.toLowerCase().contains("greet"))
-            return "Бан жур!";
-            else if(request.toLowerCase().contains("bye") || request.toLowerCase().contains("пока") && !request.toLowerCase().contains("покаж")  ||
+            return "Бон жур, мон ами!";
+            else if(request.toLowerCase().contains("bye") || request.toLowerCase().contains("пока") &&
+                    !request.toLowerCase().contains("покаж")  || request.toLowerCase().contains("счастлив") ||
                 request.toLowerCase().contains("досвид") || request.toLowerCase().contains("до свид")
                 || request.toLowerCase().contains("всего добр"))
             return "Адьё!";
             else if(request.toLowerCase().contains("пасиб") || request.toLowerCase().contains("благодар")
                     || request.toLowerCase().contains("than"))
-                return "Ешьте, не обляпайтесь!";
+                return "Рад стараться, Ваше Высокоблагородие";
            else if (request.toLowerCase().contains("как") && request.toLowerCase().contains("дел")) {
                 return readDailyStats();
             }
             else if(request.toLowerCase().contains("чак") || request.toLowerCase().contains("норрис") ||
-                    request.toLowerCase().contains("шутк") || request.toLowerCase().contains("анекдот") )
+                    request.toLowerCase().contains("Chuck") || request.toLowerCase().contains("Norris") ||
+                    request.toLowerCase().contains("шутк") || request.toLowerCase().contains("анекдот") ||
+                    request.toLowerCase().contains("шутеечк") || request.toLowerCase().contains("шуточк")
+            )
                 return chuckNorrisQuotes.getRandomQuote();
+            else if(request.toLowerCase().contains("погода") || request.toLowerCase().contains("погоду")
+            )
+                return getWeather();
+            else if(request.toLowerCase().contains("курс") || request.toLowerCase().contains("доллар")||
+                    request.toLowerCase().contains("валют")
+            )
+                return getCurrencyRate();
             else
-                return "Я не разговариваю с людьми, которые не спрашивают меня 'как дела?' или шутку о Чаке Норрисе! ";
+                return "Я узкоспециализированный бот. Отвечаю на вопрос 'как дела?'. " +
+                        "\n Также могу рассказать шутку о Чаке Норрисе, показать погоду в Пензе иликурс доллара.";
 
         }
 
@@ -128,6 +148,56 @@ public class Bot extends TelegramLongPollingBot {
             fr.close();
             return "Данные не найдены:(";
         }
+    public static String getCurrencyRate() throws Exception {
+        String url = "https://www.cbr-xml-daily.ru/daily_json.js";
 
+        URL obj = new URL(url);
+        HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
+
+        connection.setRequestMethod("GET");
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+        Object obj2 = new JSONParser().parse(response.toString());
+        JSONObject jo = (JSONObject) obj2;
+        Object obj3 = new JSONParser().parse(jo.get("Valute").toString());
+        JSONObject jo2 = (JSONObject) obj3;
+        JSONObject jo3 =  (JSONObject)jo2.get("USD");
+        String quotes = jo3.get("Value").toString();
+        String resp = "на " + LocalDate.now()+ " один USD стоит "+quotes + " rub";
+
+        return resp;
+    }
+    public static String getWeather() throws Exception {
+        String url = "http://api.openweathermap.org/data/2.5/weather?q=Penza&units=metric&appid=a6c03a410806a83f7f40201a8c8e251e";
+
+        URL obj = new URL(url);
+        HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
+
+        connection.setRequestMethod("GET");
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+        Object obj2 = new JSONParser().parse(response.toString());
+        JSONObject jo = (JSONObject) obj2;
+        Object obj3 = new JSONParser().parse(jo.get("main").toString());
+        JSONObject jo2 = (JSONObject) obj3;
+        String quotes = jo2.get("temp").toString();
+        String resp = LocalDate.now()+ " температура в Пензе "+quotes + "С";
+
+        return resp;
+    }
 
     }

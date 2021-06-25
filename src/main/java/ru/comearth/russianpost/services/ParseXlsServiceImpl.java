@@ -106,21 +106,35 @@ public class ParseXlsServiceImpl implements ParseXlsService {
                             case 5:
                                 csat.setOverallScore(Double.valueOf(cell_data));
                                 break;
-                            case 6:
-                                csat.setInterestScore(Double.valueOf(cell_data));
+                            case 6: {
+                                Double d = cell_data.isEmpty()?0:Double.valueOf(cell_data);
+                                csat.setInterestScore(d);
                                 break;
+                            }
                             case 7:
-                                csat.setProfScore(Double.valueOf(cell_data));
+                            {
+                                Double d = cell_data.isEmpty()?0:Double.valueOf(cell_data);
+                                csat.setProfScore(d);
                                 break;
+                            }
                             case 8:
-                                csat.setGoodWillScore(Double.valueOf(cell_data));
+                            {
+                                Double d = cell_data.isEmpty()?0:Double.valueOf(cell_data);
+                                csat.setGoodWillScore(d);
                                 break;
+                            }
                             case 9:
-                                csat.setUsefullInfo(Double.valueOf(cell_data));
+                            {
+                                Double d = cell_data.isEmpty()?0:Double.valueOf(cell_data);
+                                csat.setUsefullInfo(d);
                                 break;
+                            }
                             case 10:
-                                csat.setAverageScore(Double.valueOf(cell_data));
+                            {
+                                Double d = cell_data.isEmpty()?0:Double.valueOf(cell_data);
+                                csat.setAverageScore(d);
                                 break;
+                            }
                             case 11:
                                 csat.setRecordName(cell_data);
                                 break;
@@ -208,7 +222,6 @@ public class ParseXlsServiceImpl implements ParseXlsService {
                             break;
                         }
                         case 1:
-                            break;
                         case 2:
                             if (cell_data.equals("ИТОГО:")) {
                                 i = row.getLastCellNum();
@@ -219,31 +232,31 @@ public class ParseXlsServiceImpl implements ParseXlsService {
                             timeStats.setName(cell_data);
                             break;
                         case 4:
-                            timeStats.setTotalCalls(Double.valueOf(cell_data));
+                            timeStats.setTotalCalls(Double.valueOf(cell_data.replaceAll(",",".")));
                             break;
                         case 5:
-                            timeStats.setATT(Double.valueOf(cell_data));
+                            timeStats.setATT(Double.valueOf(cell_data.replaceAll(",",".")));
                             break;
                         case 6:
-                            timeStats.setACW(Double.valueOf(cell_data));
+                            timeStats.setACW(Double.valueOf(cell_data.replaceAll(",",".")));
                             break;
                         case 7:
-                            timeStats.setAHT(Double.valueOf(cell_data));
+                            timeStats.setAHT(Double.valueOf(cell_data.replaceAll(",",".")));
                             break;
                         case 8:
-                            timeStats.setHold(Double.valueOf(cell_data));
+                            timeStats.setHold(Double.valueOf(cell_data.replaceAll(",",".")));
                             break;
                         case 9:
-                            timeStats.setASA(Double.valueOf(cell_data));
+                            timeStats.setASA(Double.valueOf(cell_data.replaceAll(",",".")));
                             break;
                         case 10:
-                            timeStats.setOccupancy(Double.valueOf(cell_data));
+                            timeStats.setOccupancy(Double.valueOf(cell_data.replaceAll(",",".")));
                             break;
                         case 11:
-                            timeStats.setUtilization(Double.valueOf(cell_data));
+                            timeStats.setUtilization(Double.valueOf(cell_data.replaceAll(",",".")));
                             break;
                         case 12:
-                            timeStats.setTransferedCalls(Double.valueOf(cell_data));
+                            timeStats.setTransferedCalls(Double.valueOf(cell_data.replaceAll(",",".")));
                             break;
                     }
                 }
@@ -256,6 +269,7 @@ public class ParseXlsServiceImpl implements ParseXlsService {
                     if (timeStats.getName() != null && operatorRepository.findByFullName(timeStats.getName()) == null) {
                         readbookXlsx.close();
                         Files.deleteIfExists(file.toPath());
+                        System.out.println(timeStats.getAHT()+"!!!");
                         throw new Exception("\n" + "В базе нет данных об операторе - " + timeStats.getName() + "\n");
                     } else {
                         timeStats.setOperator(operatorRepository.findByFullName(timeStats.getName()));
